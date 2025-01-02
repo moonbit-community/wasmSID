@@ -17,31 +17,31 @@ impl CPU {
   has_interrupt(Self) -> Bool
   hook(Self, Int, (Int) -> Unit) -> Unit
   interrupts(Self) -> Bool
-  irq(Self, ~pc? : Int) -> Unit
-  load(Self, Int, FixedArray[Int], ~length : Int = .., ~has_load_address : Bool = ..) -> Int
-  new(~pc : Int = .., ~data : FixedArray[Int] = .., ~addr : Int = .., ~length : Int = .., ~decimal_mode : Bool = .., ~debug : Bool = ..) -> Self
-  nmi(Self, ~pc? : Int) -> Unit
+  irq(Self, pc? : Int) -> Unit
+  load(Self, Int, FixedArray[Int], length~ : Int = .., has_load_address~ : Bool = ..) -> Int
+  new(pc~ : Int = .., data~ : FixedArray[Int] = .., addr~ : Int = .., length~ : Int = .., decimal_mode~ : Bool = .., debug~ : Bool = ..) -> Self
+  nmi(Self, pc? : Int) -> Unit
   pc(Self) -> Int
-  push(Self, UInt8, ~dummy : Bool = ..) -> Unit
+  push(Self, UInt8, dummy~ : Bool = ..) -> Unit
   push16(Self, UInt16) -> Unit
-  read(Self, UInt16, ~dummy : Bool = ..) -> UInt8
+  read(Self, UInt16, dummy~ : Bool = ..) -> UInt8
   register(Self, Register, Int) -> Unit
-  reset(Self, ~baseaddress? : Int) -> Unit
+  reset(Self, baseaddress? : Int) -> Unit
   setIRQ(Self, UInt16) -> Unit
   setNMI(Self, UInt16) -> Unit
   setRESET(Self, UInt16) -> Unit
   set_flags(Self, UInt8) -> Unit
   set_interrupt(Self) -> Unit
-  set_irq(Self, ~state : Bool = ..) -> Unit
-  set_nmi(Self, ~state : Bool = ..) -> Unit
+  set_irq(Self, state~ : Bool = ..) -> Unit
+  set_nmi(Self, state~ : Bool = ..) -> Unit
   set_read(Self, (Int, Bool) -> Int) -> Unit
   set_write(Self, (Int, Int, Bool) -> Unit) -> Unit
   step(Self) -> Int
-  write(Self, UInt16, UInt8, ~dummy : Bool = ..) -> Unit
-  write16(Self, UInt16, UInt16, ~dummy : Bool = ..) -> Unit
+  write(Self, UInt16, UInt8, dummy~ : Bool = ..) -> Unit
+  write16(Self, UInt16, UInt16, dummy~ : Bool = ..) -> Unit
 }
 
-pub enum Flag {
+pub(all) enum Flag {
   C
   Z
   I
@@ -53,27 +53,25 @@ pub enum Flag {
 }
 impl Flag {
   lor(Self, Self) -> Int
-  op_equal(Self, Self) -> Bool
 }
+impl Eq for Flag
 
 type Flags
 impl Flags {
   get(Self) -> UInt8
-  op_equal(Self, Self) -> Bool
   set(Self, UInt8) -> Unit
   set_interrupt(Self) -> Unit
-  to_string(Self) -> String
 }
+impl Eq for Flags
+impl Show for Flags
 
 type Instruction
 
 type Mode
-impl Mode {
-  op_equal(Self, Self) -> Bool
-  to_string(Self) -> String
-}
+impl Eq for Mode
+impl Show for Mode
 
-pub enum Register {
+pub(all) enum Register {
   SP
   A
   X
@@ -82,40 +80,32 @@ pub enum Register {
 
 type Registers
 
-pub type UInt16 Int
+pub(all) type UInt16 Int
 impl UInt16 {
-  compare(Self, Self) -> Int
-  default() -> Self
-  op_equal(Self, Self) -> Bool
   to_hex(Self) -> String
-  to_string(Self) -> String
 }
+impl Compare for UInt16
+impl Default for UInt16
+impl Eq for UInt16
+impl Show for UInt16
 
-pub type UInt8 Int
+pub(all) type UInt8 Int
 impl UInt8 {
   bit(Self, Self) -> Bool
-  compare(Self, Self) -> Int
-  default() -> Self
-  op_equal(Self, Self) -> Bool
   to_hex(Self) -> String
-  to_string(Self) -> String
 }
+impl Compare for UInt8
+impl Default for UInt8
+impl Eq for UInt8
+impl Show for UInt8
 
 type Vector
-impl Vector {
-  op_equal(Self, Self) -> Bool
-}
+impl Eq for Vector
 
 // Type aliases
 
 // Traits
+trait U16
 
-// Extension Methods
-impl Show for Flags
-
-impl Show for Mode
-
-impl Show for UInt16
-
-impl Show for UInt8
+trait U8
 
