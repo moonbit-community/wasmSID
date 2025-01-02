@@ -50,11 +50,11 @@ fn op_get(self : CRAFlags, flag : CRAFlags) -> Int {
 }
 
 fn land(self : CRA, value : CRAFlags) -> CRA {
-  self.0 & value[value]
+  self._ & value[value]
 }
 
 fn lor(self : CRA, value : CRA) -> CRA {
-  self.0 | value.0
+  self._ | value._
 }
 
 fn cra(flag : CRAFlags) -> Int {
@@ -62,9 +62,9 @@ fn cra(flag : CRAFlags) -> Int {
 }
 
 fn has(self : CRA, mask : CRAFlags) -> Bool {
-  (self.0 & mask[mask]) != 0
+  (self._ & mask[mask]) != 0
 }
 
 fn clear(self : CRA, mask : CRAFlags) -> CRA {
-  self.0 & (-mask[mask] - 1)
+  self._ & (-mask[mask] - 1)
 }

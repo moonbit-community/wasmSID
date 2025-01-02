@@ -33,7 +33,7 @@ fn op_get(self : VideoStandard, value : VideoStandard) -> Int! {
 type CPUClock VideoStandard derive(Show, Eq)
 
 fn to_int(self : CPUClock) -> Int! {
-  match self.0 {
+  match self._ {
     Unknown => 0
     NTSC => 1022727
     PAL => 985248
@@ -95,7 +95,7 @@ test "CPUClock::PAL shift left" {
 type ScanLines VideoStandard derive(Show, Eq)
 
 fn to_int(self : ScanLines) -> Int! {
-  match self.0 {
+  match self._ {
     NTSC => 262
     PAL => 312
     _ => raise UnknownScanLines
@@ -135,7 +135,7 @@ test "error ScanLines::Both" {
 type ScanLineCycles VideoStandard derive(Show, Eq)
 
 fn to_int(self : ScanLineCycles) -> Int! {
-  match self.0 {
+  match self._ {
     NTSC => 65
     PAL => 63
     _ => raise UnknownScanLineCycles
@@ -175,7 +175,7 @@ test "error ScanLineCycles::Both" {
 type FrameRate VideoStandard derive(Show, Eq)
 
 fn to_int(self : FrameRate) -> Int! {
-  match self.0 {
+  match self._ {
     NTSC => 60
     PAL => 50
     _ => raise UnknownFrameRate

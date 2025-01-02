@@ -343,7 +343,7 @@ fn op_get(self : PSID, address : Int) -> Int {
   }
 
   // println(
-  //   "PSID $" + address.to_hex() + " → #$" + (self.data[address.0] |> u8).to_hex(),
+  //   "PSID $" + address.to_hex() + " → #$" + (self.data[address._] |> u8).to_hex(),
   // )
   self.data[address]
 }

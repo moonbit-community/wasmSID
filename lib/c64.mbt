@@ -138,7 +138,7 @@ pub fn C64::new(
     cpuFrequency: Unknown,
     sampleClockRatio: 0,
     selectedModel: Unknown,
-    mainVolume: 0.0,
+    mainVolume: 0._,
     //
     attenuation: 26,
     timerSource: 0,
@@ -242,7 +242,7 @@ pub fn reset(self : C64) -> Unit! {
   // }
   // self.sid[1] = SID::new(
   //   self.cpu,
-  //   0xD000 + (self.psid.sid2Address << 4).0,
+  //   0xD000 + (self.psid.sid2Address << 4)._,
   //   ~model,
   //   channel=Channel::Right,
   // )
@@ -257,7 +257,7 @@ pub fn reset(self : C64) -> Unit! {
   // }
   // self.sid[2] = SID::new(
   //   self.cpu,
-  //   0xD000 + (self.psid.sid3Address << 4).0,
+  //   0xD000 + (self.psid.sid3Address << 4)._,
   //   ~model,
   //   channel=Channel::Both,
   // )

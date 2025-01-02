@@ -585,20 +585,20 @@ fn write(
       self.register.directionB[7] = value.bit(7)
     }
     TA_LO => {
-      self.timerA.counter = (self.timerA.counter & 0xFF00) | u16(value).0
-      self.timerA.latch = (self.timerA.latch & 0xFF00) | u16(value).0
+      self.timerA.counter = (self.timerA.counter & 0xFF00) | u16(value)._
+      self.timerA.latch = (self.timerA.latch & 0xFF00) | u16(value)._
     }
     TA_HI => {
-      self.timerA.counter = (u16(value) << 8).0 | (self.timerA.counter & 0x00FF)
-      self.timerA.latch = (u16(value) << 8).0 | (self.timerA.latch & 0x00FF)
+      self.timerA.counter = (u16(value) << 8)._ | (self.timerA.counter & 0x00FF)
+      self.timerA.latch = (u16(value) << 8)._ | (self.timerA.latch & 0x00FF)
     }
     TB_LO => {
-      self.timerB.counter = (self.timerB.counter & 0xFF00) | u16(value).0
-      self.timerB.latch = (self.timerB.latch & 0xFF00) | u16(value).0
+      self.timerB.counter = (self.timerB.counter & 0xFF00) | u16(value)._
+      self.timerB.latch = (self.timerB.latch & 0xFF00) | u16(value)._
     }
     TB_HI => {
-      self.timerB.counter = (u16(value) << 8).0 | (self.timerB.counter & 0x00FF)
-      self.timerB.latch = (u16(value) << 8).0 | (self.timerB.latch & 0x00FF)
+      self.timerB.counter = (u16(value) << 8)._ | (self.timerB.counter & 0x00FF)
+      self.timerB.latch = (u16(value) << 8)._ | (self.timerB.latch & 0x00FF)
     }
     TOD_10TH =>
       /// Bits 0-3:  Time of Day tenths of second digit (BCD)
@@ -671,7 +671,7 @@ fn write(
       self.register.controlA.forceLoad = value.bit(4)
       /// Bit 5:  Timer A input mode (1=count microprocessor cycles, 0=count signals on
       ///         CNT line at pin 4 of User Port)
-      self.register.controlA.inputMode = match (value & 0b00100000).0 >> 5 {
+      self.register.controlA.inputMode = match (value & 0b00100000)._ >> 5 {
         0b01 => TimerAInputMode::CountCycles
         0b00 => TimerAInputMode::CountSignals
       }
@@ -704,7 +704,7 @@ fn write(
       ///            01 = Count signals on CNT line at pin 4 of User Port
       ///            10 = Count each time that Timer A counts down to 0
       ///            11 = Count Timer A 0's when CNT pulses are also present
-      self.register.controlB.inputMode = match (value & 0b01100000).0 >> 5 {
+      self.register.controlB.inputMode = match (value & 0b01100000)._ >> 5 {
         0b00 => TimerBInputMode::CountCycles
         0b01 => TimerBInputMode::CountSignals
         0b10 => TimerBInputMode::CountTimerA

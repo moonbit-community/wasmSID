@@ -79,7 +79,7 @@ fn FilterResonanceControl::from_u8(value : UInt8) -> FilterResonanceControl {
     /// Bit 3:  Filter the output from the external input?  1=yes
     external: (value & (1 << 3)) != 0,
     /// Bits 4-7:  Select filter resonance 0-15
-    resonance: (value & 0xF0).0 >> 4,
+    resonance: (value & 0xF0)._ >> 4,
   }
 }
 

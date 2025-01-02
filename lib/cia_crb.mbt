@@ -50,11 +50,11 @@ fn op_get(self : CRBFlags, flag : CRBFlags) -> Int {
 }
 
 fn land(self : CRB, value : CRBFlags) -> CRB {
-  self.0 & value[value]
+  self._ & value[value]
 }
 
 fn lor(self : CRB, value : CRB) -> CRB {
-  self.0 | value.0
+  self._ | value._
 }
 
 fn crb(flag : CRBFlags) -> Int {
@@ -62,9 +62,9 @@ fn crb(flag : CRBFlags) -> Int {
 }
 
 fn has(self : CRB, mask : CRBFlags) -> Bool {
-  (self.0 & mask[mask]) != 0
+  (self._ & mask[mask]) != 0
 }
 
 fn clear(self : CRB, mask : CRBFlags) -> CRB {
-  self.0 & (-mask[mask] - 1)
+  self._ & (-mask[mask] - 1)
 }
