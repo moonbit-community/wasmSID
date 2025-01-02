@@ -1,4 +1,4 @@
-/// 6526
+///| 6526
 ///
 /// $DC00-$DCFF CIA #1
 /// $DC00-$DC0F Complex Interface Adapter (CIA) #1 Registers
@@ -7,17 +7,21 @@
 /// $DD00-$DDFF CIA #2
 /// $DD00-$DD0F Complex Interface Adapter (CIA) #2 Registers
 /// $DD10-$DDFF CIA #2 Register Images  The result is that every 16-byte area in this 256-byte block is a mirror of every other.
-
 let cia_mem_start = 0xDC00
 
+///|
 pub let cia1_mem_start = 0xDC00
 
+///|
 pub let cia2_mem_start = 0xDD00
 
+///|
 let cia_mem_end = 0xDDFF
 
+///|
 let cia_mem_size = 0x00FF
 
+///|
 struct Timer {
   mut latch : Int
   mut counter : Int
@@ -25,6 +29,7 @@ struct Timer {
   // mut interrupt : Bool // enable/disable underflow interrupt
 } derive(Show, Default)
 
+///|
 struct CIA {
   mem : FixedArray[Int]
   baseaddress : Int
@@ -40,6 +45,7 @@ struct CIA {
   debug : Bool
 }
 
+///|
 pub fn CIA::new(
   mem? : Memory,
   baseaddress : Int,
@@ -105,6 +111,7 @@ pub fn CIA::new(
   cia
 }
 
+///|
 pub fn reset(self : CIA, videoStandard~ : VideoStandard = Unknown) -> Unit {
   // self.mem.reset(offset=self.baseaddress, length=cia_mem_length)
   // self.rom.reset()
@@ -151,7 +158,7 @@ pub fn reset(self : CIA, videoStandard~ : VideoStandard = Unknown) -> Unit {
   }
 }
 
-/// p.127
+///| p.127
 /// Timers. Program 5-2 allows you to see the timers updating on the screen. Timer
 /// A normally controls the IRQ rate, which is why POKEs to $DC04 and $DC05 (56324
 /// and 56325) alter the cursor flash rate. TA counts down with the system clock about
@@ -232,6 +239,7 @@ pub fn emulate(self : CIA, cycles : Int) -> Bool {
   self.register.interruptControl.interrupt
 }
 
+///|
 fn read(self : CIA, register : CIAregister, dummy~ : Bool = false) -> UInt8 {
   let address = cia(register) % 0x10 // (repeated every $10, 16 bytes)
   if self.debug && not(dummy) {
@@ -459,10 +467,12 @@ fn read(self : CIA, register : CIAregister, dummy~ : Bool = false) -> UInt8 {
   }
 }
 
+///|
 fn op_get(self : CIA, register : CIAregister) -> UInt8 {
   self.read(register)
 }
 
+///|
 fn write(
   self : CIA,
   register : CIAregister,
@@ -721,6 +731,7 @@ fn write(
   }
 }
 
+///|
 fn op_set(self : CIA, register : CIAregister, value : UInt8) -> Unit {
   self.write(register, value)
 }

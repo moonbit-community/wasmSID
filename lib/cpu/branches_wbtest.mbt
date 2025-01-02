@@ -314,6 +314,7 @@ test "BVCCanBranchForwardsWhenOverflowNegativeIsNotSet" {
 
 // Test
 
+///|
 struct BEQTestData {
   // Input
   pc : Int
@@ -337,6 +338,7 @@ struct BEQTestData {
   expectN : Bool
 }
 
+///|
 fn testBEQ(t : BEQTestData) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 

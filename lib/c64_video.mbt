@@ -1,4 +1,5 @@
 //0:NTSC, 1:PAL (based on the SID-header field)
+///|
 enum VideoStandard {
   Unknown
   NTSC
@@ -6,6 +7,7 @@ enum VideoStandard {
   Both
 } derive(Show, Eq)
 
+///|
 fn VideoStandard::from_int(value : Int) -> VideoStandard! {
   match value {
     0b00 => Unknown
@@ -16,6 +18,7 @@ fn VideoStandard::from_int(value : Int) -> VideoStandard! {
   }
 }
 
+///|
 fn to_int(self : VideoStandard) -> Int! {
   match self {
     NTSC => 0
@@ -24,14 +27,15 @@ fn to_int(self : VideoStandard) -> Int! {
   }
 }
 
+///|
 fn op_get(self : VideoStandard, value : VideoStandard) -> Int! {
   value.to_int!()
 }
 
-///
-
+///|
 type CPUClock VideoStandard derive(Show, Eq)
 
+///|
 fn to_int(self : CPUClock) -> Int! {
   match self._ {
     Unknown => 0
@@ -41,10 +45,12 @@ fn to_int(self : CPUClock) -> Int! {
   }
 }
 
+///|
 fn op_get(self : CPUClock, value : VideoStandard) -> Int! {
   value.to_int!()
 }
 
+///|
 fn op_shl(self : CPUClock, bits : Int) -> Int {
   try {
     self.to_int!() << bits
@@ -90,10 +96,10 @@ test "CPUClock::PAL shift left" {
   inspect!(value << 4, content="15763968")
 }
 
-///
-
+///|
 type ScanLines VideoStandard derive(Show, Eq)
 
+///|
 fn to_int(self : ScanLines) -> Int! {
   match self._ {
     NTSC => 262
@@ -102,6 +108,7 @@ fn to_int(self : ScanLines) -> Int! {
   }
 }
 
+///|
 fn op_get(self : ScanLines, value : VideoStandard) -> Int! {
   value.to_int!()
 }
@@ -130,10 +137,10 @@ test "error ScanLines::Both" {
   inspect!(value.to_int?(), content="Err(unknown scan lines)")
 }
 
-///
-
+///|
 type ScanLineCycles VideoStandard derive(Show, Eq)
 
+///|
 fn to_int(self : ScanLineCycles) -> Int! {
   match self._ {
     NTSC => 65
@@ -142,6 +149,7 @@ fn to_int(self : ScanLineCycles) -> Int! {
   }
 }
 
+///|
 fn op_get(self : ScanLineCycles, value : VideoStandard) -> Int! {
   value.to_int!()
 }
@@ -170,10 +178,10 @@ test "error ScanLineCycles::Both" {
   inspect!(value.to_int?(), content="Err(unknown scan line cycles)")
 }
 
-///
-
+///|
 type FrameRate VideoStandard derive(Show, Eq)
 
+///|
 fn to_int(self : FrameRate) -> Int! {
   match self._ {
     NTSC => 60
@@ -182,6 +190,7 @@ fn to_int(self : FrameRate) -> Int! {
   }
 }
 
+///|
 fn op_get(self : FrameRate, value : VideoStandard) -> Int! {
   value.to_int!()
 }

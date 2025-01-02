@@ -80,7 +80,9 @@
 /// not used.  Reading them will always return a value of 255 ($FF), and
 /// writing to them will have no effect.
 
-/// ($D420-$D7FF)
+// https://www.oxyron.de/html/registers_sid.html
+
+///| ($D420-$D7FF)
 /// SID Register Images
 ///
 /// Since the SID chip requires enough addressing lines for only 32
@@ -89,17 +91,18 @@
 /// assigned to it.  The result is that every 32-byte area in this 1K
 /// block is a mirror of every other.  For the sake of clarity in your
 /// programs, it is advisable not to use these addresses at all.
-
-// https://www.oxyron.de/html/registers_sid.html
-
 let sid_mem_start = 0xD400
 
+///|
 let sid1_mem_start = 0xD400
 
+///|
 let sid_mem_end = 0xD7FF
 
+///|
 let sid_mem_size = 0x03FF
 
+///|
 struct SID {
   mem : FixedArray[Int]
   baseaddress : Int
@@ -133,6 +136,7 @@ struct SID {
   debug : Bool
 }
 
+///|
 pub fn SID::new(
   mem? : Memory,
   baseaddress : Int,
@@ -218,6 +222,7 @@ pub fn SID::new(
   sid
 }
 
+///|
 pub fn reset(self : SID, videoStandard~ : VideoStandard = Unknown) -> Unit {
   // self.mem.reset(offset=self.baseaddress, length=sid_mem_length)
   for i = 0; i < self.mem.length(); i = i + 1 {
@@ -236,6 +241,7 @@ pub fn reset(self : SID, videoStandard~ : VideoStandard = Unknown) -> Unit {
   }
 }
 
+///|
 fn emulateADSR(self : SID, cycles : Int) -> Unit {
   let mut prescalePeriod : UInt16 = 0
   for channel = 0; channel < 3; channel = channel + 1 {
@@ -297,6 +303,7 @@ fn emulateADSR(self : SID, cycles : Int) -> Unit {
   }
 }
 
+///|
 fn emulateWaves(
   self : SID,
   sampleClockRatio : Int,
@@ -501,6 +508,7 @@ fn emulateWaves(
   self.emulateSIDoutputStage(attenuation, realSID)
 }
 
+///|
 fn emulateSIDoutputStage(self : SID, attenuation : Int, realSID : Bool) -> Int {
   // println(
   //   ">> SID::emulateSIDoutputStage attenuation[\{attenuation}] realSID[\{realSID}]",
@@ -590,6 +598,7 @@ fn emulateSIDoutputStage(self : SID, attenuation : Int, realSID : Bool) -> Int {
 
 //----------------------- High-quality (oversampled) waveform-generation --------------------------
 
+///|
 fn emulateHQWaves(self : SID, cycles : Int) -> SIDwavOutput {
   self.nonFiltedSample = 0
   self.filterInputSample = 0
@@ -731,6 +740,7 @@ fn emulateHQWaves(self : SID, cycles : Int) -> SIDwavOutput {
   wavOutput
 }
 
+///|
 fn op_get(self : SID, register : SIDregister) -> UInt8 {
   /// SID Register Images
   let address = sid(register) % 0x20 // (repeated every $20, 32 bytes)
@@ -833,6 +843,7 @@ fn op_get(self : SID, register : SIDregister) -> UInt8 {
   }
 }
 
+///|
 fn op_set(self : SID, register : SIDregister, value : UInt8) -> Unit {
   /// SID Register Images
   let address = sid(register) % 0x20 // (repeated every $20, 32 bytes)

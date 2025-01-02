@@ -5901,22 +5901,16 @@ test "brk_interrupt" {
   let cpu = CPU::new(debug=true)
   cpu.flags.set(0x00)
   let _ = cpu.load(IRQ.addr(), [0x00, 0x04])
-  let _ = cpu.load(
-    0x0000,
-    [
-      0xA9, 0x01, // LDA #$01
-       0x00, // BRK
-       0xEA, 0xEA, 0xEA, // NOP, NOP, NOP
-       0xA9, 0x03,
-    ],
-  ) // LDA #$03
-  let _ = cpu.load(
-    0x0400,
-    [
-      0xA9, 0x02, // LDA #$02
-       0x40,
-    ],
-  ) // RTI
+  let _ = cpu.load(0x0000, [
+    0xA9, 0x01, // LDA #$01
+     0x00, // BRK
+     0xEA, 0xEA, 0xEA, // NOP, NOP, NOP
+     0xA9, 0x03,
+  ]) // LDA #$03
+  let _ = cpu.load(0x0400, [
+    0xA9, 0x02, // LDA #$02
+     0x40,
+  ]) // RTI
   assert_eq!(cpu.step(), 2) // LDA #$01
   assert_eq!(cpu.registers[A], 0x01)
   assert_eq!(cpu.pc, 0x0002)

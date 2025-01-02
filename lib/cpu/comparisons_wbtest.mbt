@@ -310,6 +310,7 @@ test "CPYAbsoluteCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Test Cases
 
+///|
 fn testCompareTwoIdenticalValues() -> CMPTestData {
   {
     // Input
@@ -325,6 +326,7 @@ fn testCompareTwoIdenticalValues() -> CMPTestData {
   }
 }
 
+///|
 fn testCompareALargePositiveToASmallPositive() -> CMPTestData {
   {
     // Input
@@ -340,6 +342,7 @@ fn testCompareALargePositiveToASmallPositive() -> CMPTestData {
   }
 }
 
+///|
 fn testCompareANegativeNumberToAPositive() -> CMPTestData {
   {
     // Input
@@ -355,6 +358,7 @@ fn testCompareANegativeNumberToAPositive() -> CMPTestData {
   }
 }
 
+///|
 fn testCompareTwoValuesThatResultInANegativeFlagSet() -> CMPTestData {
   {
     // Input
@@ -378,6 +382,7 @@ fn testCompareTwoValuesThatResultInANegativeFlagSet() -> CMPTestData {
 //   Y
 // }
 
+///|
 struct CMPTestData {
   // Input
   pc : Int
@@ -391,6 +396,7 @@ struct CMPTestData {
   expectN : Bool
 }
 
+///|
 fn testCompareImmediate(t : CMPTestData, r~ : Register = A) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 
@@ -449,6 +455,7 @@ fn testCompareImmediate(t : CMPTestData, r~ : Register = A) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testCompareZeroPage(t : CMPTestData, r~ : Register = A) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 
@@ -510,6 +517,7 @@ fn testCompareZeroPage(t : CMPTestData, r~ : Register = A) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testCompareZeroPageX(t : CMPTestData) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 
@@ -559,6 +567,7 @@ fn testCompareZeroPageX(t : CMPTestData) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testCompareAbsolute(t : CMPTestData, r~ : Register = A) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 
@@ -621,6 +630,7 @@ fn testCompareAbsolute(t : CMPTestData, r~ : Register = A) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testCompareAbsoluteX(t : CMPTestData) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 
@@ -671,6 +681,7 @@ fn testCompareAbsoluteX(t : CMPTestData) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testCompareAbsoluteY(t : CMPTestData) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 
@@ -721,6 +732,7 @@ fn testCompareAbsoluteY(t : CMPTestData) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testCompareIndirectX(t : CMPTestData) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 
@@ -774,6 +786,7 @@ fn testCompareIndirectX(t : CMPTestData) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testCompareIndirectY(t : CMPTestData) -> Unit!Error {
   let cpu = CPU::new(pc=t.pc)
 

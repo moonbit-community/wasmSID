@@ -1747,6 +1747,7 @@ test "SBCIndirectYCanSubtractTwoNegativeNumbers" {
 
 // Test
 
+///|
 struct ADCTestData {
   // Input
   c : Bool
@@ -1763,6 +1764,7 @@ struct ADCTestData {
   expectN : Bool
 }
 
+///|
 fn testADCAbsolute(t : ADCTestData, ins~ : Instruction = ADC_ABS) -> Unit!Error {
   let cpu = CPU::new(pc=0xFF00)
 
@@ -1808,10 +1810,12 @@ fn testADCAbsolute(t : ADCTestData, ins~ : Instruction = ADC_ABS) -> Unit!Error 
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCAbsolute(t : ADCTestData) -> Unit!Error {
   testADCAbsolute!(t, ins=SBC_ABS)
 }
 
+///|
 fn testADCImmediate(t : ADCTestData, ins~ : Instruction = ADC) -> Unit!Error {
   let cpu = CPU::new(pc=0xFF00)
 
@@ -1853,10 +1857,12 @@ fn testADCImmediate(t : ADCTestData, ins~ : Instruction = ADC) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCImmediate(t : ADCTestData) -> Unit!Error {
   testADCImmediate!(t, ins=SBC)
 }
 
+///|
 fn testADCZeroPage(t : ADCTestData, ins~ : Instruction = ADC_ZP) -> Unit!Error {
   let cpu = CPU::new(pc=0xFF00)
 
@@ -1901,10 +1907,12 @@ fn testADCZeroPage(t : ADCTestData, ins~ : Instruction = ADC_ZP) -> Unit!Error {
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCZeroPage(t : ADCTestData) -> Unit!Error {
   testADCZeroPage!(t, ins=SBC_ZP)
 }
 
+///|
 fn testADCZeroPageX(
   t : ADCTestData,
   ins~ : Instruction = ADC_ZPX
@@ -1953,10 +1961,12 @@ fn testADCZeroPageX(
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCZeroPageX(t : ADCTestData) -> Unit!Error {
   testADCZeroPageX!(t, ins=SBC_ZPX)
 }
 
+///|
 fn testADCAbsoluteX(
   t : ADCTestData,
   ins~ : Instruction = ADC_ABSX
@@ -2006,10 +2016,12 @@ fn testADCAbsoluteX(
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCAbsoluteX(t : ADCTestData) -> Unit!Error {
   testADCAbsoluteX!(t, ins=SBC_ABSX)
 }
 
+///|
 fn testADCAbsoluteY(
   t : ADCTestData,
   ins~ : Instruction = ADC_ABSY
@@ -2059,10 +2071,12 @@ fn testADCAbsoluteY(
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCAbsoluteY(t : ADCTestData) -> Unit!Error {
   testADCAbsoluteY!(t, ins=SBC_ABSY)
 }
 
+///|
 fn testADCIndirectX(
   t : ADCTestData,
   ins~ : Instruction = ADC_INDX
@@ -2115,10 +2129,12 @@ fn testADCIndirectX(
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCIndirectX(t : ADCTestData) -> Unit!Error {
   testADCIndirectX!(t, ins=SBC_INDX)
 }
 
+///|
 fn testADCIndirectY(
   t : ADCTestData,
   ins~ : Instruction = ADC_INDY
@@ -2171,6 +2187,7 @@ fn testADCIndirectY(
   assert_eq!(cpu.flags[N], t.expectN)
 }
 
+///|
 fn testSBCIndirectY(t : ADCTestData) -> Unit!Error {
   testADCIndirectY!(t, ins=SBC_INDY)
 }

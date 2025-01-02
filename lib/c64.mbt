@@ -1,29 +1,38 @@
 // https://www.zimmers.net/cbmpics/cbm/c64/
 
+///|
 let c64_mem_start = 0x0000
 
+///|
 let c64_mem_end = 0xFFFF
 
 // let c64_mem_size = 0xFFFF
 
+///|
 let c64_basic_mem_start = 0xA000
 
+///|
 let c64_basic_mem_end = 0xBFFF
 
 // let c64_basic_mem_size = 0x2000
 
+///|
 let c64_kernal_mem_start = 0xE000
 
+///|
 let c64_kernal_mem_end = 0xFFFF
 
 // let c64_kernal_mem_size = 0x2000
 
+///|
 let c64_characters_mem_start = 0xD000
 
+///|
 let c64_characters_mem_end = 0xDFFF
 
 // let c64_characters_mem_size = 0x1000
 
+///|
 pub(all) struct C64 {
   baseaddress : UInt16
   mem : Memory
@@ -76,8 +85,10 @@ pub(all) struct C64 {
   mut debug : Bool
 }
 
+///|
 let defaultSampleRate = 44100
 
+///|
 pub fn C64::new(
   baseaddress~ : Int = 0x0000,
   mem? : Memory,
@@ -162,14 +173,12 @@ pub fn C64::new(
 
   // c64.initC64()
 
-  cpu.set_read(
-    fn(address : Int, dummy : Bool) -> Int { c64.read(address, dummy~) },
-  )
-  cpu.set_write(
-    fn(address : Int, value : Int, dummy : Bool) -> Unit {
-      c64.write(address, value, dummy~)
-    },
-  )
+  cpu.set_read(fn(address : Int, dummy : Bool) -> Int {
+    c64.read(address, dummy~)
+  })
+  cpu.set_write(fn(address : Int, value : Int, dummy : Bool) -> Unit {
+    c64.write(address, value, dummy~)
+  })
 
   // must happen after read/write functions set
   let _ = cpu.load(address, data, length~)
@@ -188,6 +197,7 @@ pub fn C64::new(
   c64
 }
 
+///|
 pub fn set_bank(self : C64, port : IOPort) -> Unit {
   if port.hiram {
     self.bank[bank_kernal] = ROM
@@ -205,6 +215,7 @@ pub fn set_bank(self : C64, port : IOPort) -> Unit {
 }
 
 //set hardware-parameters (Models, SIDs) for playback of loaded SID-tune
+///|
 pub fn reset(self : C64) -> Unit! {
   println(">> C64::reset")
 
@@ -459,6 +470,7 @@ pub fn reset(self : C64) -> Unit! {
   println("<< C64::reset")
 }
 
+///|
 pub fn initCPU(self : C64, baseaddress? : Int) -> Unit {
   // println(">> C64::initCPU")
 
@@ -472,6 +484,7 @@ pub fn initCPU(self : C64, baseaddress? : Int) -> Unit {
 }
 
 //C64 Reset
+///|
 pub fn initC64(self : C64) -> Unit! {
   println(">> C64::initC64")
 
@@ -533,6 +546,7 @@ pub fn initC64(self : C64) -> Unit! {
   println("<< C64::initC64")
 }
 
+///|
 pub fn emulate(self : C64) -> Output {
   // println(">> C64::emulate")
   //
@@ -618,22 +632,18 @@ pub fn emulate(self : C64) -> Output {
   let mut hqSampleCount = 0
   if self.highQuality { //oversampled waveform-generation
     hqSampleCount = 0
-    self.sid.each(
-      fn(sid) {
-        sid.nonFiltedSample = 0
-        sid.filterInputSample = 0
-      },
-    )
+    self.sid.each(fn(sid) {
+      sid.nonFiltedSample = 0
+      sid.filterInputSample = 0
+    })
 
     //
     while self.overSampleCycleCnt <= self.sampleClockRatio {
-      self.sid.each(
-        fn(sid) {
-          let output = sid.emulateHQWaves(oversamplingCycles)
-          sid.nonFiltedSample += output.nonFilted
-          sid.filterInputSample += output.filterInput
-        },
-      )
+      self.sid.each(fn(sid) {
+        let output = sid.emulateHQWaves(oversamplingCycles)
+        sid.nonFiltedSample += output.nonFilted
+        sid.filterInputSample += output.filterInput
+      })
       hqSampleCount += 1
       self.overSampleCycleCnt += oversamplingCycles << 4
     }
@@ -646,73 +656,63 @@ pub fn emulate(self : C64) -> Output {
   let output = Output::default()
   if not(self.highQuality) {
     if not(self.stereo) || self.sid.length() == 1 {
-      self.sid.each(
-        fn(sid) {
-          let tmp = sid.emulateWaves(
-            self.sampleClockRatio,
-            self.attenuation,
-            self.realSID,
-          )
-          output.left = tmp
-          output.right = tmp
-        },
-      )
+      self.sid.each(fn(sid) {
+        let tmp = sid.emulateWaves(
+          self.sampleClockRatio,
+          self.attenuation,
+          self.realSID,
+        )
+        output.left = tmp
+        output.right = tmp
+      })
     } else {
       let mut tmp = 0
       output.left = tmp
       output.right = tmp
-      self.sid.each(
-        fn(sid) {
-          tmp = sid.emulateWaves(
-            self.sampleClockRatio,
-            self.attenuation,
-            self.realSID,
-          )
-          match sid.channel {
-            Left => output.left += tmp * 2
-            Right => output.right += tmp * 2
-            _ => {
-              output.left += tmp
-              output.right += tmp
-            }
+      self.sid.each(fn(sid) {
+        tmp = sid.emulateWaves(
+          self.sampleClockRatio,
+          self.attenuation,
+          self.realSID,
+        )
+        match sid.channel {
+          Left => output.left += tmp * 2
+          Right => output.right += tmp * 2
+          _ => {
+            output.left += tmp
+            output.right += tmp
           }
-        },
-      )
+        }
+      })
     }
   } else {
     //SID output-stages and mono/stereo handling for High-Quality SID-emulation
-    self.sid.each(
-      fn(sid) {
-        sid.nonFiltedSample /= hqSampleCount
-        sid.filterInputSample /= hqSampleCount
-      },
-    )
+    self.sid.each(fn(sid) {
+      sid.nonFiltedSample /= hqSampleCount
+      sid.filterInputSample /= hqSampleCount
+    })
     if not(self.stereo) || self.sid.length() == 1 {
       let mut tmp = 0
-      self.sid.each(
-        fn(sid) {
-          tmp += sid.emulateSIDoutputStage(self.attenuation, self.realSID)
-        },
-      )
+      self.sid.each(fn(sid) {
+        tmp += sid.emulateSIDoutputStage(self.attenuation, self.realSID)
+      })
       output.left = tmp
       output.right = tmp
     } else {
       let mut tmp = 0
       output.left = tmp
       output.right = tmp
-      self.sid.each(
-        fn(sid) {
-          tmp = sid.emulateSIDoutputStage(self.attenuation, self.realSID)
-          match sid.channel {
-            Left => output.left += tmp * 2
-            Right => output.right += tmp * 2
-            _ => {
-              output.left += tmp
-              output.right += tmp
-            }
+      self.sid.each(fn(sid) {
+        tmp = sid.emulateSIDoutputStage(self.attenuation, self.realSID)
+        match sid.channel {
+          Left => output.left += tmp * 2
+          Right => output.right += tmp * 2
+          _ => {
+            output.left += tmp
+            output.right += tmp
           }
-        },
-      )
+        }
+      })
     }
   }
 
@@ -730,6 +730,7 @@ pub fn emulate(self : C64) -> Output {
   output
 }
 
+///|
 pub fn load(
   self : C64,
   //
@@ -743,54 +744,67 @@ pub fn load(
   self.cpu.load(offset, data, length~, has_load_address~)
 }
 
+///|
 fn step(self : C64) -> Int {
   self.cpu.step()
 }
 
+///|
 pub fn hook(self : C64, address : Int, hook : (Int) -> Unit) -> Unit {
   self.cpu.hook(address, hook)
 }
 
+///|
 pub fn pc(self : C64) -> Int {
   self.cpu.pc()
 }
 
+///|
 pub fn clear_registers(self : C64) -> Unit {
   self.cpu.clear_registers()
 }
 
+///|
 pub fn get_registers(self : C64) -> @cpu.Registers {
   self.cpu.get_registers()
 }
 
+///|
 pub fn clear_flags(self : C64) -> Unit {
   self.cpu.clear_flags()
 }
 
+///|
 pub fn get_flags(self : C64) -> @cpu.Flags {
   self.cpu.get_flags()
 }
 
+///|
 pub fn set_flags(self : C64, flags : @cpu.UInt8) -> Unit {
   self.cpu.set_flags(flags)
 }
 
+///|
 pub fn set_interrupt_flag(self : C64) -> Unit {
   self.cpu.set_interrupt()
 }
 
+///|
 pub fn setA(self : C64, value : Int) -> Unit {
   self.cpu.register(@cpu.A, value)
 }
 
+///|
 pub fn push(self : C64, value : @cpu.UInt8) -> Unit {
   self.cpu.push(value)
 }
 
+///|
 pub fn push16(self : C64, value : @cpu.UInt16) -> Unit {
   self.cpu.push16(value)
 }
 
+///|
 fn interrupts(self : C64) -> Bool {
   // println(
   //   "*** IRQ:" +
@@ -836,6 +850,7 @@ fn interrupts(self : C64) -> Bool {
 // static const uint16_t kAddrKernalFirstPage = 0xe000;
 // static const uint16_t kAddrKernalLastPage = 0xff00;
 
+///|
 pub fn read(self : C64, address : Int, dummy~ : Bool = false) -> Int {
   if self.debug && not(dummy) {
     let register = try {
@@ -909,6 +924,7 @@ pub fn read(self : C64, address : Int, dummy~ : Bool = false) -> Int {
   self.read_direct(address)
 }
 
+///|
 fn read_direct(self : C64, address : Int) -> Int {
   // println("C64::read_direct $" + UInt16(addr).to_hex())
   //
@@ -916,6 +932,7 @@ fn read_direct(self : C64, address : Int) -> Int {
   self.mem.read(address)._
 }
 
+///|
 fn op_get(self : C64, register : C64register) -> UInt8 {
   // println("C64::op_get $" + UInt16(addr).to_hex())
   //
@@ -926,6 +943,7 @@ fn op_get(self : C64, register : C64register) -> UInt8 {
   self.read(address)
 }
 
+///|
 pub fn write(
   self : C64,
   //
@@ -1008,10 +1026,12 @@ pub fn write(
   self.write_direct(address, value)
 }
 
+///|
 fn write_direct(self : C64, address : UInt16, value : UInt8) -> Unit {
   self.mem.write(address._, value._)
 }
 
+///|
 pub fn write_word(self : C64, register : C64register, value : UInt16) -> Unit {
   let address = c64(register)
   match register {
@@ -1041,7 +1061,15 @@ pub fn write_word(self : C64, register : C64register, value : UInt16) -> Unit {
     | IMAIN
     | IOPEN
     | IQPLOP
-    | ISAVE | ISTOP | IRQ | NMI | NMINV | RESET | TXTTAB | USRCMD | WARM => {
+    | ISAVE
+    | ISTOP
+    | IRQ
+    | NMI
+    | NMINV
+    | RESET
+    | TXTTAB
+    | USRCMD
+    | WARM => {
       self.write(address, value._ >> 8)
       self.write(address + 1, value._ & 0xFF)
     }
@@ -1052,6 +1080,7 @@ pub fn write_word(self : C64, register : C64register, value : UInt16) -> Unit {
   }
 }
 
+///|
 pub fn write_array(
   self : C64,
   //
@@ -1065,6 +1094,7 @@ pub fn write_array(
   }
 }
 
+///|
 pub fn op_set(self : C64, register : C64register, value : UInt8) -> Unit {
   // println("C64::op_set $" + address.to_hex() + " = " + value.to_hex())
 

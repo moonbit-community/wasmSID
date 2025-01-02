@@ -22,20 +22,22 @@
 /// memory.  When read, they will always give a value of 255 ($FF).  This
 /// value will not change after writing to them.
 
-/// ($D040-$D3FF)
+///| ($D040-$D3FF)
 /// VIC-II Register Images
 ///
 /// Since the VIC-II requires only enough addressing lines to handle 64
 /// locations (the minimum possible for its 47 registers), none of the
 /// higher bits are decoded when addressing this 1K area.  The result is
 /// that every 64 byte area in this 1K block is a mirror of every other.
-
 pub let vic_mem_start = 0xD000
 
+///|
 let vic_mem_end = 0xD3FF
 
+///|
 let vic_mem_size = 0x03FF
 
+///|
 struct VIC {
   mem : FixedArray[Int]
   baseaddress : Int
@@ -55,6 +57,7 @@ struct VIC {
   debug : Bool
 }
 
+///|
 pub fn VIC::new(
   mem? : Memory,
   baseaddress : Int,
@@ -131,7 +134,7 @@ pub fn VIC::new(
   vic
 }
 
-/// These registers are all intialized to 0 at power-up.
+///| These registers are all intialized to 0 at power-up.
 pub fn reset(self : VIC, videoStandard~ : VideoStandard = Unknown) -> Unit! {
   // self.mem.reset(offset=self.baseaddress, length=vic_mem_length)
   for i = 0; i < self.mem.length(); i = i + 1 {
@@ -197,6 +200,7 @@ pub fn reset(self : VIC, videoStandard~ : VideoStandard = Unknown) -> Unit! {
   self.rasterRowCycles = ScanLineCycles(videoStandard).to_int!() // HINT: should be inferred
 }
 
+///|
 pub fn emulate(self : VIC, cycles : Int) -> Bool {
   // if self.debug {
   //   println(">> VIC::emulate [\{cycles}]")
@@ -257,6 +261,7 @@ pub fn emulate(self : VIC, cycles : Int) -> Bool {
 //   )
 // }
 
+///|
 fn op_get(self : VIC, register : VICregister) -> UInt8 {
   // VIC-II Register Images
   let address = vic(register) % 0x40 // (repeated every $40, 64 bytes)
@@ -578,6 +583,7 @@ fn op_get(self : VIC, register : VICregister) -> UInt8 {
   }
 }
 
+///|
 fn op_set(self : VIC, register : VICregister, value : UInt8) -> Unit {
   // VIC-II Register Images
   let address = vic(register) % 0x40 // (repeated every $40, 64 bytes)
