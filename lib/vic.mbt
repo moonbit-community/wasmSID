@@ -118,6 +118,7 @@ pub fn VIC::new(
           vic[register] = value
         },
       )
+    _ => ...
   }
 
   //

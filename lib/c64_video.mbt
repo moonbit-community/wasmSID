@@ -56,7 +56,7 @@ fn op_shl(self : CPUClock, bits : Int) -> Int {
     self.to_int!() << bits
   } catch {
     // Do nothing
-
+    _ => ...
   }
 }
 

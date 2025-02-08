@@ -102,6 +102,7 @@ pub fn CIA::new(
           cia.write(register, value, dummy~)
         },
       )
+    _ => ...
   }
 
   //
@@ -216,6 +217,7 @@ pub fn emulate(self : CIA, cycles : Int) -> Bool {
       (match self.register.controlB.inputMode {
         CountCycles => cycles
         CountTimerA => if self.register.interruptControl.timerA { 1 } else { 0 }
+        _ => ...
       })
     // println("TimerB Start #\{tmp}")
     self.register.interruptControl.timerB = tmp <= 0
@@ -684,6 +686,7 @@ fn write(
       self.register.controlA.inputMode = match (value & 0b00100000)._ >> 5 {
         0b01 => TimerAInputMode::CountCycles
         0b00 => TimerAInputMode::CountSignals
+        _ => ...
       }
       /// Bit 6:  Serial Port (56332, $DC0C) mode (1=output, 0=input)
       self.register.controlA.serialMode = if value.bit(6) {
@@ -719,6 +722,7 @@ fn write(
         0b01 => TimerBInputMode::CountSignals
         0b10 => TimerBInputMode::CountTimerA
         0b11 => TimerBInputMode::CountZero
+        _ => ...
       }
       /// Bit 7:  Select Time of Day write
       ///         (0=writing to TOD registers sets alarm, 1=writing to TOD registers sets clock)

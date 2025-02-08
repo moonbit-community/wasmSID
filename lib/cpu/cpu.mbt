@@ -139,6 +139,7 @@ fn addr(self : Vector) -> Int {
     NMI => 0xFFFA
     RESET => 0xFFFC
     IRQ => 0xFFFE
+    None => ...
   }
 }
 
@@ -656,6 +657,7 @@ fn dump_step(
       // This signed 8-bit figure is called the offset.
       // BCC, BCS, BEQ, BMI, BNE, BPL, BVC, and BVS.
       " $" + (self.pc + 2 + self.read(self.pc + 1, dummy~).to_signed()).to_hex()
+    None => ...
   }
   let mut instr = ""
   for i = 0; i < 3; i = i + 1 {

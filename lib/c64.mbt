@@ -1091,6 +1091,7 @@ pub fn write_array(
   match register {
     CARTROM | READY | GETIN =>
       values.eachi(fn(i, value) { self.write_direct(address + i, value) })
+    _ => ...
   }
 }
 

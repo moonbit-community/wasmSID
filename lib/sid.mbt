@@ -213,6 +213,7 @@ pub fn SID::new(
           sid[register] = value
         },
       )
+    _ => ...
   }
 
   //
@@ -802,6 +803,7 @@ fn op_get(self : SID, register : SIDregister) -> UInt8 {
       /// Bits 0-3:  Select release cycle duration (0-15)
       SUREL1 | SUREL2 | SUREL3 =>
         (voice.envelope.sustain << 4) | voice.envelope.release
+      _ => ...
     }
   }
 
@@ -840,6 +842,7 @@ fn op_get(self : SID, register : SIDregister) -> UInt8 {
       (self.register.filterSelect.bandPass.to_int() << 5) |
       (self.register.filterSelect.highPass.to_int() << 6) |
       (self.register.disconnectVoice.to_int() << 7)
+    _ => ...
   }
 }
 
@@ -909,6 +912,7 @@ fn op_set(self : SID, register : SIDregister, value : UInt8) -> Unit {
         voice.envelope.sustain = (value._ & 0xF0) >> 4
         voice.envelope.release = value._ & 0x0F
       }
+      _ => ...
     }
   }
 

@@ -427,6 +427,7 @@ fn testCompareImmediate(t : CMPTestData, r~ : Register = A) -> Unit!Error {
     A => cpu.write(t.pc + 0, CMP.to_int())
     X => cpu.write(t.pc + 0, CPX.to_int())
     Y => cpu.write(t.pc + 0, CPY.to_int())
+    SP => ...
   }
   cpu.write(t.pc + 1, t.op)
 
@@ -486,6 +487,7 @@ fn testCompareZeroPage(t : CMPTestData, r~ : Register = A) -> Unit!Error {
     A => cpu.write(t.pc + 0, CMP_ZP.to_int())
     X => cpu.write(t.pc + 0, CPX_ZP.to_int())
     Y => cpu.write(t.pc + 0, CPY_ZP.to_int())
+    SP => ...
   }
   cpu.write(t.pc + 1, 0x42)
 
@@ -598,6 +600,7 @@ fn testCompareAbsolute(t : CMPTestData, r~ : Register = A) -> Unit!Error {
     A => cpu.write(t.pc + 0, CMP_ABS.to_int())
     X => cpu.write(t.pc + 0, CPX_ABS.to_int())
     Y => cpu.write(t.pc + 0, CPY_ABS.to_int())
+    SP => ...
   }
   cpu.write(t.pc + 1, 0x00)
   cpu.write(t.pc + 2, 0x80)
