@@ -332,11 +332,11 @@ fn readString(self : PSID, header : SIDheader) -> String! {
 
 ///|
 fn makeString(self : PSID, offset : Int, length : Int) -> String {
-  let bytes : Bytes = Bytes::new(length << 1)
+  let arr = FixedArray::make(length << 1, Byte::default())
   for i = 0; i < length; i = i + 1 {
-    bytes[i << 1] = self[offset + i].to_byte()
+    arr[i << 1] = self[offset + i].to_byte()
   }
-  bytes.to_string()
+  arr.to_string()
 }
 
 ///|
