@@ -35,7 +35,7 @@ enum CRAFlags {
 }
 
 ///|
-fn op_get(self : CRAFlags, flag : CRAFlags) -> Int {
+fn CRAFlags::op_get(self : CRAFlags, flag : CRAFlags) -> Int {
   match flag {
     NONE => 0
     //

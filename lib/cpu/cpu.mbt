@@ -144,12 +144,12 @@ fn addr(self : Vector) -> Int {
 }
 
 ///|
-pub fn setRESET(self : CPU, pc : UInt16) -> Unit {
+pub fn CPU::setRESET(self : CPU, pc : UInt16) -> Unit {
   self.write16(RESET.addr(), pc)
 }
 
 ///|
-pub fn reset(self : CPU, baseaddress? : Int) -> Unit {
+pub fn CPU::reset(self : CPU, baseaddress? : Int) -> Unit {
   // self.mem.clear()
 
   self.cycles = 0
@@ -191,42 +191,42 @@ pub fn clear_flags(self : CPU) -> Unit {
 }
 
 ///|
-pub fn get_flags(self : CPU) -> Flags {
+pub fn CPU::get_flags(self : CPU) -> Flags {
   self.flags
 }
 
 ///|
-pub fn set_flags(self : CPU, flags : UInt8) -> Unit {
+pub fn CPU::set_flags(self : CPU, flags : UInt8) -> Unit {
   self.flags.set(flags)
 }
 
 ///|
-pub fn has_interrupt(self : CPU) -> Bool {
+pub fn CPU::has_interrupt(self : CPU) -> Bool {
   self.flags[I]
 }
 
 ///|
-pub fn clear_interrupt(self : CPU) -> Unit {
+pub fn CPU::clear_interrupt(self : CPU) -> Unit {
   self.flags[I] = false
 }
 
 ///|
-pub fn set_interrupt(self : CPU) -> Unit {
+pub fn CPU::set_interrupt(self : CPU) -> Unit {
   self.flags[I] = true
 }
 
 ///|
-pub fn hook(self : CPU, address : Int, hook : (Int) -> Unit) -> Unit {
+pub fn CPU::hook(self : CPU, address : Int, hook : (Int) -> Unit) -> Unit {
   self.hooks.push(AddressHook::new(address, hook))
 }
 
 ///|
-pub fn pc(self : CPU) -> Int {
+pub fn CPU::pc(self : CPU) -> Int {
   self.pc._
 }
 
 ///|
-pub fn a(self : CPU) -> UInt8 {
+pub fn CPU::a(self : CPU) -> UInt8 {
   self.registers[A]
 }
 
@@ -2285,7 +2285,7 @@ enum Instruction {
 // }
 
 ///|
-fn to_int(self : Instruction) -> Int {
+fn Instruction::to_int(self : Instruction) -> Int {
   get_opcode(self)._
 }
 
@@ -2491,11 +2491,11 @@ fn get_opcode(instruction : Instruction) -> UInt8 {
 }
 
 ///|
-fn op_get(self : CPU, address : Int) -> Int {
+fn CPU::op_get(self : CPU, address : Int) -> Int {
   self.read(address, dummy=true)._
 }
 
 ///|
-fn op_set(self : CPU, address : Int, value : Int) -> Unit {
+fn CPU::op_set(self : CPU, address : Int, value : Int) -> Unit {
   self.write(address, value, dummy=true)
 }

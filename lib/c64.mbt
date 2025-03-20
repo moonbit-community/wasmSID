@@ -731,7 +731,7 @@ pub fn emulate(self : C64) -> Output {
 }
 
 ///|
-pub fn load(
+pub fn C64::load(
   self : C64,
   //
   data : FixedArray[Int],
@@ -745,22 +745,22 @@ pub fn load(
 }
 
 ///|
-fn step(self : C64) -> Int {
+fn C64::step(self : C64) -> Int {
   self.cpu.step()
 }
 
 ///|
-pub fn hook(self : C64, address : Int, hook : (Int) -> Unit) -> Unit {
+pub fn C64::hook(self : C64, address : Int, hook : (Int) -> Unit) -> Unit {
   self.cpu.hook(address, hook)
 }
 
 ///|
-pub fn pc(self : C64) -> Int {
+pub fn C64::pc(self : C64) -> Int {
   self.cpu.pc()
 }
 
 ///|
-pub fn clear_registers(self : C64) -> Unit {
+pub fn C64::clear_registers(self : C64) -> Unit {
   self.cpu.clear_registers()
 }
 
@@ -770,37 +770,37 @@ pub fn get_registers(self : C64) -> @cpu.Registers {
 }
 
 ///|
-pub fn clear_flags(self : C64) -> Unit {
+pub fn C64::clear_flags(self : C64) -> Unit {
   self.cpu.clear_flags()
 }
 
 ///|
-pub fn get_flags(self : C64) -> @cpu.Flags {
+pub fn C64::get_flags(self : C64) -> @cpu.Flags {
   self.cpu.get_flags()
 }
 
 ///|
-pub fn set_flags(self : C64, flags : @cpu.UInt8) -> Unit {
+pub fn C64::set_flags(self : C64, flags : @cpu.UInt8) -> Unit {
   self.cpu.set_flags(flags)
 }
 
 ///|
-pub fn set_interrupt_flag(self : C64) -> Unit {
+pub fn C64::set_interrupt_flag(self : C64) -> Unit {
   self.cpu.set_interrupt()
 }
 
 ///|
-pub fn setA(self : C64, value : Int) -> Unit {
+pub fn C64::setA(self : C64, value : Int) -> Unit {
   self.cpu.register(@cpu.A, value)
 }
 
 ///|
-pub fn push(self : C64, value : @cpu.UInt8) -> Unit {
+pub fn C64::push(self : C64, value : @cpu.UInt8) -> Unit {
   self.cpu.push(value)
 }
 
 ///|
-pub fn push16(self : C64, value : @cpu.UInt16) -> Unit {
+pub fn C64::push16(self : C64, value : @cpu.UInt16) -> Unit {
   self.cpu.push16(value)
 }
 

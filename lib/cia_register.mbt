@@ -35,7 +35,7 @@ enum RunMode {
 } derive(Show, Eq)
 
 ///|
-fn to_int(self : RunMode) -> Int {
+fn RunMode::to_int(self : RunMode) -> Int {
   match self {
     OneShot => 1
     Continuous => 0
@@ -49,7 +49,7 @@ enum SerialMode {
 } derive(Show, Eq)
 
 ///|
-fn to_int(self : SerialMode) -> Int {
+fn SerialMode::to_int(self : SerialMode) -> Int {
   match self {
     Output => 1
     Input => 0

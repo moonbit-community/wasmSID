@@ -483,7 +483,7 @@ fn VoiceControl::from_u8(value : UInt8) -> VoiceControl {
 }
 
 ///|
-fn to_u8(self : VoiceControl) -> UInt8 {
+fn VoiceControl::to_u8(self : VoiceControl) -> UInt8 {
   /// Bit 0:  Gate Bit:  1=Start attack/decay/sustain, 0=Start release
   (self.gateBit.to_int() << 0) |
   /// Bit 1:  Sync Bit:  1=Synchronize Oscillator with Oscillator 3 frequency

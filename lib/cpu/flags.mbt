@@ -11,7 +11,7 @@ pub(all) enum Flag {
 } derive(Eq)
 
 ///|
-pub fn lor(self : Flag, flag : Flag) -> Int {
+pub fn Flag::lor(self : Flag, flag : Flag) -> Int {
   self.bits() | flag.bits()
 }
 
@@ -68,7 +68,7 @@ fn Flags::new(flags~ : UInt8 = 0x00) -> Flags {
 // }
 
 ///|
-fn op_get(self : Flags, flag : Flag) -> Bool {
+fn Flags::op_get(self : Flags, flag : Flag) -> Bool {
   match flag {
     C => self.c
     Z => self.z
@@ -82,7 +82,7 @@ fn op_get(self : Flags, flag : Flag) -> Bool {
 }
 
 ///|
-fn op_set(self : Flags, flag : Flag, value : Bool) -> Unit {
+fn Flags::op_set(self : Flags, flag : Flag, value : Bool) -> Unit {
   match flag {
     C => self.c = value
     Z => self.z = value
@@ -96,7 +96,7 @@ fn op_set(self : Flags, flag : Flag, value : Bool) -> Unit {
 }
 
 ///|
-fn reset(self : Flags) -> Unit {
+fn Flags::reset(self : Flags) -> Unit {
   self[C] = false
   self[Z] = false
   self[I] = false
@@ -108,17 +108,17 @@ fn reset(self : Flags) -> Unit {
 }
 
 ///|
-fn clear(self : Flags, flag : Flag) -> Unit {
+fn Flags::clear(self : Flags, flag : Flag) -> Unit {
   self[flag] = false
 }
 
 ///|
-fn is_clear(self : Flags, flag : Flag) -> Bool {
+fn Flags::is_clear(self : Flags, flag : Flag) -> Bool {
   self[flag] == false
 }
 
 ///|
-fn not_set(self : Flags, flag : Flag) -> Bool {
+fn Flags::not_set(self : Flags, flag : Flag) -> Bool {
   self[flag] == false
 }
 
@@ -127,13 +127,13 @@ fn not_set(self : Flags, flag : Flag) -> Bool {
 // }
 
 ///|
-fn is_set(self : Flags, flag : Flag) -> Bool {
+fn Flags::is_set(self : Flags, flag : Flag) -> Bool {
   self[flag] == true
 }
 
 // Get status register value.
 ///|
-pub fn get(self : Flags) -> UInt8 {
+pub fn Flags::get(self : Flags) -> UInt8 {
   self.getC() |
   self.getZ() |
   self.getI() |
@@ -146,7 +146,7 @@ pub fn get(self : Flags) -> UInt8 {
 
 // Set status register value.
 ///|
-pub fn set(self : Flags, flags : UInt8) -> Unit {
+pub fn Flags::set(self : Flags, flags : UInt8) -> Unit {
   self[C] = flags.bit(0)
   self[Z] = flags.bit(1)
   self[I] = flags.bit(2)
@@ -232,12 +232,12 @@ fn not_decimal(self : Flags) -> Bool {
 }
 
 ///|
-fn overflow(self : Flags) -> Bool {
+fn Flags::overflow(self : Flags) -> Bool {
   self[V]
 }
 
 ///|
-fn not_overflow(self : Flags) -> Bool {
+fn Flags::not_overflow(self : Flags) -> Bool {
   not(self.overflow())
 }
 

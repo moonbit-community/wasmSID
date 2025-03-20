@@ -451,7 +451,7 @@ enum ControlRegisterVertical {
 }
 
 ///|
-fn op_get(
+fn ControlRegisterVertical::op_get(
   self : ControlRegisterVertical,
   flag : ControlRegisterVertical
 ) -> Int {

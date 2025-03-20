@@ -345,7 +345,7 @@ pub fn videoStandard(self : PSID) -> VideoStandard {
 }
 
 ///|
-fn op_get(self : PSID, address : Int) -> Int {
+fn PSID::op_get(self : PSID, address : Int) -> Int {
   if address < 0x0000 || address > self.data.length() {
     // self.dump()
     println("PSID::get out of bounds")
@@ -359,7 +359,7 @@ fn op_get(self : PSID, address : Int) -> Int {
 }
 
 ///|
-fn op_set(self : PSID, address : Int, value : Int) -> Unit {
+fn PSID::op_set(self : PSID, address : Int, value : Int) -> Unit {
   if address < 0x0000 || address > 0xFFFF {
     // self.dump()
     println("PSID::set out of bounds")

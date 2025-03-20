@@ -99,7 +99,7 @@ pub fn hook(
 }
 
 ///|
-pub fn clear(self : Memory) -> Unit {
+pub fn Memory::clear(self : Memory) -> Unit {
   self.mem = FixedArray::make(self.mem.length(), 0x00)
 }
 
@@ -190,7 +190,11 @@ fn dump(
 }
 
 ///|
-pub fn read(self : Memory, address : UInt16, dummy~ : Bool = false) -> UInt8 {
+pub fn Memory::read(
+  self : Memory,
+  address : UInt16,
+  dummy~ : Bool = false
+) -> UInt8 {
   // let _dummy = if dummy { "🔍" } else { "" }
   // println("Memory::read $\{u16(addr).to_hex()} \{_dummy}")
 
@@ -213,7 +217,7 @@ pub fn read(self : Memory, address : UInt16, dummy~ : Bool = false) -> UInt8 {
 }
 
 ///|
-pub fn read_direct(self : Memory, address : UInt16) -> UInt8 {
+pub fn Memory::read_direct(self : Memory, address : UInt16) -> UInt8 {
   // println("Memory::read_direct $" + UInt16(addr).to_hex())
   //
 
@@ -233,7 +237,7 @@ pub fn read_direct(self : Memory, address : UInt16) -> UInt8 {
 // }
 
 ///|
-pub fn write(
+pub fn Memory::write(
   self : Memory,
   //
   address : UInt16,
@@ -265,7 +269,7 @@ pub fn write(
 }
 
 ///|
-pub fn write_direct(self : Memory, address : UInt16, value : UInt8) -> Unit {
+pub fn Memory::write_direct(self : Memory, address : UInt16, value : UInt8) -> Unit {
   // match self.write {
   //   Some(_) => self.write(addr, value)
   //   None => self.mem[addr._] = value._ |> u8
