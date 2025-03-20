@@ -817,7 +817,6 @@ fn c64(register : C64register) -> Int {
     CARTROM => 0x8000
     BASICROM => 0xA000
     KERNALROM => 0xE000
-
     _ => ...
   }
 }

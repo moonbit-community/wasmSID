@@ -136,7 +136,10 @@ pub fn VIC::new(
 }
 
 ///| These registers are all intialized to 0 at power-up.
-pub fn VIC::reset(self : VIC, videoStandard~ : VideoStandard = Unknown) -> Unit! {
+pub fn VIC::reset(
+  self : VIC,
+  videoStandard~ : VideoStandard = Unknown
+) -> Unit! {
   // self.mem.reset(offset=self.baseaddress, length=vic_mem_length)
   for i = 0; i < self.mem.length(); i = i + 1 {
     self.mem[i] = 0x00

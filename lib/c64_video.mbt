@@ -60,36 +60,42 @@ fn CPUClock::op_shl(self : CPUClock, bits : Int) -> Int {
   }
 }
 
+///|
 test "CPUClock::None" {
   let value = CPUClock(Unknown)
   assert_eq!(value, Unknown)
   inspect!(value.to_int!(), content="0")
 }
 
+///|
 test "CPUClock::NTSC" {
   let value = CPUClock(NTSC)
   assert_eq!(value, NTSC)
   inspect!(value.to_int!(), content="1022727")
 }
 
+///|
 test "CPUClock::PAL" {
   let value = CPUClock(PAL)
   assert_eq!(value, PAL)
   inspect!(value.to_int!(), content="985248")
 }
 
+///|
 test "error CPUClock::Both" {
   let value = CPUClock(Both)
   assert_eq!(value, Both)
   inspect!(value.to_int?(), content="Err(unknown CPU clock)")
 }
 
+///|
 test "CPUClock::NTSC shift left" {
   let value = CPUClock(NTSC)
   assert_eq!(value, NTSC)
   inspect!(value << 4, content="16363632")
 }
 
+///|
 test "CPUClock::PAL shift left" {
   let value = CPUClock(PAL)
   assert_eq!(value, PAL)
@@ -113,24 +119,28 @@ fn ScanLines::op_get(self : ScanLines, value : VideoStandard) -> Int! {
   value.to_int!()
 }
 
+///|
 test "error ScanLines::None" {
   let value = ScanLines(Unknown)
   assert_eq!(value, Unknown)
   inspect!(value.to_int?(), content="Err(unknown scan lines)")
 }
 
+///|
 test "ScanLines::NTSC" {
   let value = ScanLines(NTSC)
   assert_eq!(value, NTSC)
   inspect!(value.to_int!(), content="262")
 }
 
+///|
 test "ScanLines::PAL" {
   let value = ScanLines(PAL)
   assert_eq!(value, PAL)
   inspect!(value.to_int!(), content="312")
 }
 
+///|
 test "error ScanLines::Both" {
   let value = ScanLines(Both)
   assert_eq!(value, Both)
@@ -154,24 +164,28 @@ fn ScanLineCycles::op_get(self : ScanLineCycles, value : VideoStandard) -> Int! 
   value.to_int!()
 }
 
+///|
 test "error ScanLineCycles::None" {
   let value = ScanLineCycles(Unknown)
   assert_eq!(value, Unknown)
   inspect!(value.to_int?(), content="Err(unknown scan line cycles)")
 }
 
+///|
 test "ScanLineCycles::NTSC" {
   let value = ScanLineCycles(NTSC)
   assert_eq!(value, NTSC)
   inspect!(value.to_int!(), content="65")
 }
 
+///|
 test "ScanLineCycles::PAL" {
   let value = ScanLineCycles(PAL)
   assert_eq!(value, PAL)
   inspect!(value.to_int!(), content="63")
 }
 
+///|
 test "error ScanLineCycles::Both" {
   let value = ScanLineCycles(Both)
   assert_eq!(value, Both)
@@ -195,24 +209,28 @@ fn FrameRate::op_get(self : FrameRate, value : VideoStandard) -> Int! {
   value.to_int!()
 }
 
+///|
 test "error FrameRate::None" {
   let value = FrameRate(Unknown)
   assert_eq!(value, Unknown)
   inspect!(value.to_int?(), content="Err(unknown frame rate)")
 }
 
+///|
 test "FrameRate::NTSC" {
   let value = FrameRate(NTSC)
   assert_eq!(value, NTSC)
   inspect!(value.to_int!(), content="60")
 }
 
+///|
 test "FrameRate::PAL" {
   let value = FrameRate(PAL)
   assert_eq!(value, PAL)
   inspect!(value.to_int!(), content="50")
 }
 
+///|
 test "error FrameRate::Both" {
   let value = FrameRate(Both)
   assert_eq!(value, Both)

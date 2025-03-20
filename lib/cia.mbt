@@ -744,6 +744,7 @@ fn CIA::op_set(self : CIA, register : CIAregister, value : UInt8) -> Unit {
   self.write(register, value)
 }
 
+///|
 test "cia1_instantiate" {
   let timer = 3
   //
@@ -776,6 +777,7 @@ test "cia1_instantiate" {
   assert_eq!(cia[ICR], ICR::icr(NONE))
 }
 
+///|
 test "cia1_timera" {
   let timer = 3
   //
@@ -846,6 +848,7 @@ test "cia1_timera" {
   assert_false!(cia.register.interruptControl.interrupt)
 }
 
+///|
 test "cia1_timera_forceload" {
   let timer = 3
   //
@@ -930,6 +933,7 @@ test "cia1_timera_forceload" {
   assert_true!(cia.register.interruptEnable.timerA) // stays true as no interrupt has occurred
 }
 
+///|
 test "cia1_timera_oneshot" {
   let timer = 3
   //

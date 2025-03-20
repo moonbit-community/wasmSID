@@ -269,7 +269,11 @@ pub fn Memory::write(
 }
 
 ///|
-pub fn Memory::write_direct(self : Memory, address : UInt16, value : UInt8) -> Unit {
+pub fn Memory::write_direct(
+  self : Memory,
+  address : UInt16,
+  value : UInt8
+) -> Unit {
   // match self.write {
   //   Some(_) => self.write(addr, value)
   //   None => self.mem[addr._] = value._ |> u8

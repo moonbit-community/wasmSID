@@ -2,21 +2,25 @@
 
 // Immediate
 
+///|
 test "CMPImmediateCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareImmediate!(t)
 }
 
+///|
 test "CMPImmediateCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareImmediate!(t)
 }
 
+///|
 test "CMPImmediateCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareImmediate!(t)
 }
 
+///|
 test "CMPImmediateCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareImmediate!(t)
@@ -24,21 +28,25 @@ test "CMPImmediateCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Zero Page
 
+///|
 test "CMPZeroPageCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareZeroPage!(t)
 }
 
+///|
 test "CMPZeroPageCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareZeroPage!(t)
 }
 
+///|
 test "CMPZeroPageCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareZeroPage!(t)
 }
 
+///|
 test "CMPZeroPageCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareZeroPage!(t)
@@ -46,21 +54,25 @@ test "CMPZeroPageCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Zero Page X
 
+///|
 test "CMPZeroPageXCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareZeroPageX!(t)
 }
 
+///|
 test "CMPZeroPageXCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareZeroPageX!(t)
 }
 
+///|
 test "CMPZeroPageXCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareZeroPageX!(t)
 }
 
+///|
 test "CMPZeroPageXCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareZeroPageX!(t)
@@ -68,21 +80,25 @@ test "CMPZeroPageXCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Absolute
 
+///|
 test "CMPAbsoluteCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareAbsolute!(t)
 }
 
+///|
 test "CMPAbsoluteCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareAbsolute!(t)
 }
 
+///|
 test "CMPAbsoluteCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareAbsolute!(t)
 }
 
+///|
 test "CMPAbsoluteCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareAbsolute!(t)
@@ -90,21 +106,25 @@ test "CMPAbsoluteCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Absolute X
 
+///|
 test "CMPAbsoluteXCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareAbsoluteX!(t)
 }
 
+///|
 test "CMPAbsoluteXCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareAbsoluteX!(t)
 }
 
+///|
 test "CMPAbsoluteXCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareAbsoluteX!(t)
 }
 
+///|
 test "CMPAbsoluteXCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareAbsoluteX!(t)
@@ -112,21 +132,25 @@ test "CMPAbsoluteXCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Absolute Y
 
+///|
 test "CMPAbsoluteYCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareAbsoluteY!(t)
 }
 
+///|
 test "CMPAbsoluteYCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareAbsoluteY!(t)
 }
 
+///|
 test "CMPAbsoluteYCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareAbsoluteY!(t)
 }
 
+///|
 test "CMPAbsoluteYCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareAbsoluteY!(t)
@@ -134,21 +158,25 @@ test "CMPAbsoluteYCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Indirect X
 
+///|
 test "CMPIndirectXCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareIndirectX!(t)
 }
 
+///|
 test "CMPIndirectXCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareIndirectX!(t)
 }
 
+///|
 test "CMPIndirectXCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareIndirectX!(t)
 }
 
+///|
 test "CMPIndirectXCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareIndirectX!(t)
@@ -156,21 +184,25 @@ test "CMPIndirectXCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // Indirect Y
 
+///|
 test "CMPIndirectYCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareIndirectY!(t)
 }
 
+///|
 test "CMPIndirectYCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareIndirectY!(t)
 }
 
+///|
 test "CMPIndirectYCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareIndirectY!(t)
 }
 
+///|
 test "CMPIndirectYCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareIndirectY!(t)
@@ -178,21 +210,25 @@ test "CMPIndirectYCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // CPX Immediate
 
+///|
 test "CPXImmediateCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareImmediate!(t, r=X)
 }
 
+///|
 test "CPXImmediateCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareImmediate!(t, r=X)
 }
 
+///|
 test "CPXImmediateCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareImmediate!(t, r=X)
 }
 
+///|
 test "CPXImmediateCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareImmediate!(t, r=X)
@@ -200,21 +236,25 @@ test "CPXImmediateCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // CPY Immediate
 
+///|
 test "CPYImmediateCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareImmediate!(t, r=Y)
 }
 
+///|
 test "CPYImmediateCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareImmediate!(t, r=Y)
 }
 
+///|
 test "CPYImmediateCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareImmediate!(t, r=Y)
 }
 
+///|
 test "CPYImmediateCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareImmediate!(t, r=Y)
@@ -222,21 +262,25 @@ test "CPYImmediateCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // CPX Zero Page
 
+///|
 test "CPXZeroPageCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareZeroPage!(t, r=X)
 }
 
+///|
 test "CPXZeroPageCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareZeroPage!(t, r=X)
 }
 
+///|
 test "CPXZeroPageCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareZeroPage!(t, r=X)
 }
 
+///|
 test "CPXZeroPageCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareZeroPage!(t, r=X)
@@ -244,21 +288,25 @@ test "CPXZeroPageCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // CPY Zero Page
 
+///|
 test "CPYZeroPageCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareZeroPage!(t, r=Y)
 }
 
+///|
 test "CPYZeroPageCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareZeroPage!(t, r=Y)
 }
 
+///|
 test "CPYZeroPageCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareZeroPage!(t, r=Y)
 }
 
+///|
 test "CPYZeroPageCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareZeroPage!(t, r=Y)
@@ -266,21 +314,25 @@ test "CPYZeroPageCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // CPX Absolute
 
+///|
 test "CPXAbsoluteCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareAbsolute!(t, r=X)
 }
 
+///|
 test "CPXAbsoluteCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareAbsolute!(t, r=X)
 }
 
+///|
 test "CPXAbsoluteCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareAbsolute!(t, r=X)
 }
 
+///|
 test "CPXAbsoluteCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareAbsolute!(t, r=X)
@@ -288,21 +340,25 @@ test "CPXAbsoluteCanCompareTwoValuesThatResultInANegativeFlagSet" {
 
 // CPY Absolute
 
+///|
 test "CPYAbsoluteCanCompareTwoIdenticalValues" {
   let t = testCompareTwoIdenticalValues()
   testCompareAbsolute!(t, r=Y)
 }
 
+///|
 test "CPYAbsoluteCanCompareALargePositiveToASmallPositive" {
   let t = testCompareALargePositiveToASmallPositive()
   testCompareAbsolute!(t, r=Y)
 }
 
+///|
 test "CPYAbsoluteCanCompareANegativeNumberToAPositive" {
   let t = testCompareANegativeNumberToAPositive()
   testCompareAbsolute!(t, r=Y)
 }
 
+///|
 test "CPYAbsoluteCanCompareTwoValuesThatResultInANegativeFlagSet" {
   let t = testCompareTwoValuesThatResultInANegativeFlagSet()
   testCompareAbsolute!(t, r=Y)

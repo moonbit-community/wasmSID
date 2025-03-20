@@ -243,6 +243,6 @@ fn UInt16::to_byte(self : UInt16) -> Byte {
 }
 
 ///|
-fn UInt16::to_int(self :  UInt16) -> Int {
+fn UInt16::to_int(self : UInt16) -> Int {
   self._
 }
