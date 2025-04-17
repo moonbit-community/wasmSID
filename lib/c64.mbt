@@ -224,7 +224,8 @@ pub fn reset(self : C64) -> Unit! {
     self.sampleRate = 44100
   }
   self.cpuFrequency = CPUClock(self.videoStandard)
-  self.sampleClockRatio = (self.cpuFrequency << 4) / self.sampleRate //shifting (multiplication) enhances SampleClockRatio precision
+  self.sampleClockRatio = (self.cpuFrequency.to_int?().unwrap() << 4) /
+    self.sampleRate //shifting (multiplication) enhances SampleClockRatio precision
   //
   self.vic.rasterCompare = ScanLines(self.videoStandard).to_int!() // HINT: should be inferred
   self.vic.rasterRowCycles = ScanLineCycles(self.videoStandard).to_int!() // HINT: should be inferred

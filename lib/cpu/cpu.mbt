@@ -818,13 +818,13 @@ fn opAND(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 fn opASL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   match mode {
     Accumulator => {
-      self.flags.setC((self.registers[A] & N.bits()) != 0)
+      self.flags.setC((self.registers[A] & N) != 0)
       self.registers[A] = self.registers[A]._ << 1 |> u8 // overflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
-      self.flags.setC((value & N.bits()) != 0)
+      self.flags.setC((value & N) != 0)
       value = value._ << 1 |> u8 // overflow
       self.write(addr, value)
       self.flags.setZN(value)
@@ -860,7 +860,7 @@ fn opBEQ(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 ///|
 fn opBIT(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let value = self.read(addr)
-  self.flags.setV((value & V.bits()) != 0)
+  self.flags.setV((value & V) != 0)
   self.flags.setZ((value & self.registers[A]) == 0)
   self.flags.setN(value.bit(7))
 }
@@ -1098,13 +1098,13 @@ fn opLDY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 fn opLSR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   match mode {
     Accumulator => {
-      self.flags.setC((self.registers[A] & C.bits()) != 0)
+      self.flags.setC((self.registers[A] & C) != 0)
       self.registers[A] = self.registers[A]._ >> 1 |> u8 // underflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
-      self.flags.setC((value & C.bits()) != 0)
+      self.flags.setC((value & C) != 0)
       value = value._ >> 1 |> u8 // underflow
       self.write(addr, value)
       self.flags.setZN(value)
@@ -1138,7 +1138,7 @@ fn opPHA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 ///
 /// The `PHP` instruction affects no registers or flags in the micropro­cessor.
 fn opPHP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
-  self.push(self.flags.get() | B.bits() | U.bits())
+  self.push(self.flags.get() | B | U)
 }
 
 // PLA - Pull accumulator
@@ -1156,8 +1156,8 @@ fn opPLA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 /// The `PLP` instruction affects no registers in the processor other than the status register.
 /// This instruction could affect all flags in the status register.
 fn opPLP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
-  // self.flags.set(self.pop()&(0xCF)|(U.bits())|(B.bits())) // pull() & 0xEF | 0x20
-  self.flags.set((self.pop() & 0xEF) | U.bits()) // nestest: pull() & 0xEF | 0x20
+  // self.flags.set(self.pop()&(0xCF)|(U)|(B)) // pull() & 0xEF | 0x20
+  self.flags.set((self.pop() & 0xEF) | U) // nestest: pull() & 0xEF | 0x20
 }
 
 // ROL - Rotate left
@@ -1166,13 +1166,13 @@ fn opROL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let c = self.flags[C].to_int()
   match mode {
     Accumulator => {
-      self.flags.setC((self.registers[A] & N.bits()) != 0)
+      self.flags.setC((self.registers[A] & N) != 0)
       self.registers[A] = (self.registers[A]._ << 1 |> u8) | c // overflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
-      self.flags.setC((value & N.bits()) != 0)
+      self.flags.setC((value & N) != 0)
       value = (value._ << 1 |> u8) | c // overflow
       self.write(addr, value)
       self.flags.setZN(value)
@@ -1186,13 +1186,13 @@ fn opROR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let c = self.flags[C].to_int()
   match mode {
     Accumulator => {
-      self.flags.setC((self.registers[A] & C.bits()) != 0)
+      self.flags.setC((self.registers[A] & C) != 0)
       self.registers[A] = (self.registers[A]._ >> 1 |> u8) | (c << 7) // underflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
-      self.flags.setC((value & C.bits()) != 0)
+      self.flags.setC((value & C) != 0)
       value = (value._ >> 1 |> u8) | (c << 7) // underflow
       self.write(addr, value)
       self.flags.setZN(value)
@@ -1210,8 +1210,8 @@ fn opROR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 /// It affects no other registers in the microprocessor.
 fn opRTI(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   println("*** RTI")
-  // self.flags.set(self.pop()&(0xCF)|(U.bits())|(B.bits())) // pull() & 0xEF | 0x20
-  // self.flags.set((self.pop() & 0xEF) | U.bits()) // nestest: pull() & 0xEF | 0x20
+  // self.flags.set(self.pop()&(0xCF)|(U)|(B)) // pull() & 0xEF | 0x20
+  // self.flags.set((self.pop() & 0xEF) | U) // nestest: pull() & 0xEF | 0x20
   self.flags.set(self.pop())
   self.pc = self.pop16()
   // self.opSEI(addr, mode)

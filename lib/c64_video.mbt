@@ -51,16 +51,6 @@ fn CPUClock::op_get(self : CPUClock, value : VideoStandard) -> Int! {
 }
 
 ///|
-fn CPUClock::op_shl(self : CPUClock, bits : Int) -> Int {
-  try {
-    self.to_int!() << bits
-  } catch {
-    // Do nothing
-    _ => ...
-  }
-}
-
-///|
 test "CPUClock::None" {
   let value = CPUClock(Unknown)
   assert_eq!(value, Unknown)
@@ -92,14 +82,14 @@ test "error CPUClock::Both" {
 test "CPUClock::NTSC shift left" {
   let value = CPUClock(NTSC)
   assert_eq!(value, NTSC)
-  inspect!(value << 4, content="16363632")
+  inspect!(value.to_int?().unwrap() << 4, content="16363632")
 }
 
 ///|
 test "CPUClock::PAL shift left" {
   let value = CPUClock(PAL)
   assert_eq!(value, PAL)
-  inspect!(value << 4, content="15763968")
+  inspect!(value.to_int?().unwrap() << 4, content="15763968")
 }
 
 ///|

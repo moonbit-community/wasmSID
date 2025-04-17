@@ -1,33 +1,29 @@
 ///|
-pub(all) enum Flag {
-  C // Carry Flag
-  Z // Zero Flag
-  I // Interrupt Disable Flag
-  D // Decimal Mode Flag
-  B // Break Command Flag
-  U // Unused Flag
-  V // Overflow Flag
-  N // Negative Flag
-} derive(Eq)
+pub typealias Flag = Int
 
 ///|
-pub fn Flag::lor(self : Flag, flag : Flag) -> Int {
-  self.bits() | flag.bits()
-}
+pub const C = 0b00000001 // 0x01 Carry Flag
 
 ///|
-fn bits(self : Flag) -> Int {
-  match self {
-    C => 0b00000001 // 0x01 Carry Flag
-    Z => 0b00000010 // 0x02 Zero Flag
-    I => 0b00000100 // 0x04 Interrupt Disable Flag
-    D => 0b00001000 // 0x08 Decimal Mode Flag
-    B => 0b00010000 // 0x10 Break Command Flag
-    U => 0b00100000 // 0x20 Unused Flag
-    V => 0b01000000 // 0x40 Overflow Flag
-    N => 0b10000000 // 0x80 Negative Flag
-  }
-}
+pub const Z = 0b00000010 // 0x02 Zero Flag
+
+///|
+pub const I = 0b00000100 // 0x04 Interrupt Disable Flag
+
+///|
+pub const D = 0b00001000 // 0x08 Decimal Mode Flag
+
+///|
+pub const B = 0b00010000 // 0x10 Break Command Flag
+
+///|
+pub const U = 0b00100000 // 0x20 Unused Flag
+
+///|
+pub const V = 0b01000000 // 0x40 Overflow Flag
+
+///|
+pub const N = 0b10000000 // 0x80 Negative Flag
 
 ///|
 struct Flags {
@@ -78,6 +74,7 @@ fn Flags::op_get(self : Flags, flag : Flag) -> Bool {
     U => self.u
     V => self.v
     N => self.n
+    _ => panic()
   }
 }
 
@@ -92,6 +89,7 @@ fn Flags::op_set(self : Flags, flag : Flag, value : Bool) -> Unit {
     U => self.u = value
     V => self.v = value
     N => self.n = value
+    _ => panic()
   }
 }
 
