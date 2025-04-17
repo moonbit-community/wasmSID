@@ -1,4 +1,4 @@
-package trancee/wasmSID/testsuite
+package "trancee/wasmSID/testsuite"
 
 // Values
 let _start : FixedArray[Int]

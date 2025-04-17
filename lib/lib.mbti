@@ -1,13 +1,59 @@
-package trancee/wasmSID/lib
+package "trancee/wasmSID/lib"
 
-alias @trancee/wasmSID/lib/cpu as @cpu
+import(
+  "trancee/wasmSID/lib/cpu"
+)
 
 // Values
 let cia1_mem_start : Int
 
 let cia2_mem_start : Int
 
+fn emulate(C64) -> Output
+
+fn get_registers(C64) -> @cpu.Registers
+
+fn hook(Memory, Int, Int, (UInt16, Bool) -> UInt8, (UInt16, UInt8, Bool) -> Unit) -> Unit
+
+fn initC64(C64) -> Unit!
+
+fn initCPU(C64, baseaddress? : Int) -> Unit
+
+fn load(NES, FixedArray[Int], addr~ : Int = .., length~ : Int = ..) -> Unit
+
+fn op_set(C64, C64register, UInt8) -> Unit
+
+fn pc(NES) -> Int
+
+fn process(PSID) -> Unit!
+
+fn push(NES, @cpu.UInt8) -> Unit
+
+fn push16(NES, @cpu.UInt16) -> Unit
+
+fn read(C64, Int, dummy~ : Bool = ..) -> Int
+
+fn reset(C64) -> Unit!
+
+fn set_bank(C64, IOPort) -> Unit
+
+fn set_flags(NES, @cpu.UInt8) -> Unit
+
+fn step(NES) -> Int
+
+fn to_hex(UInt8) -> String
+
+fn to_string(Exception) -> String
+
 let vic_mem_start : Int
+
+fn videoStandard(PSID) -> VideoStandard
+
+fn write(C64, Int, Int, dummy~ : Bool = ..) -> Unit
+
+fn write_array(C64, C64register, Array[UInt8]) -> Unit
+
+fn write_word(C64, C64register, UInt16) -> Unit
 
 // Types and methods
 type ADSR
@@ -27,29 +73,29 @@ pub(all) struct C64 {
   vic : VIC
   model : FixedArray[Model]
   realSID : Bool
-  sampleRate : Int
-  highQuality : Bool
-  stereo : Bool
-  playbackSpeed : Int
-  paused : Bool
-  videoStandard : VideoStandard
-  cpuFrequency : CPUClock
-  sampleClockRatio : Int
-  selectedModel : Model
-  mainVolume : Double
-  attenuation : Int
+  mut sampleRate : Int
+  mut highQuality : Bool
+  mut stereo : Bool
+  mut playbackSpeed : Int
+  mut paused : Bool
+  mut videoStandard : VideoStandard
+  mut cpuFrequency : CPUClock
+  mut sampleClockRatio : Int
+  mut selectedModel : Model
+  mut mainVolume : Double
+  mut attenuation : Int
   timerSource : Int
-  frameCycles : Int
-  frameCycleCnt : Int
-  prevRasterLine : Int
-  sampleCycleCnt : Int
-  overSampleCycleCnt : Int
-  finished : Bool
-  returned : Bool
-  irq : Bool
-  nmi : Bool
-  prevNMI : Bool
-  debug : Bool
+  mut frameCycles : Int
+  mut frameCycleCnt : Int
+  mut prevRasterLine : Int
+  mut sampleCycleCnt : Int
+  mut overSampleCycleCnt : Int
+  mut finished : Bool
+  mut returned : Bool
+  mut irq : Bool
+  mut nmi : Bool
+  mut prevNMI : Bool
+  mut debug : Bool
 }
 impl C64 {
   clear_flags(Self) -> Unit
@@ -458,26 +504,26 @@ impl Default for Output
 pub(all) struct PSID {
   mem : Memory
   data : FixedArray[Int]
-  version : Version
-  realSID : Bool
-  digiMode : Bool
-  loadAddress : Int
-  initAddress : Int
-  playAddress : Int
-  endAddress : Int
-  title : String
-  author : String
-  info : String
-  songs : UInt16
-  defaultSong : UInt16
-  flags : Flags
-  startPage : UInt8
-  pageLength : UInt8
-  sid2Flags : SIDFlags
-  sid3Flags : SIDFlags
-  sid4Flags : SIDFlags
-  sid2Address : UInt8
-  sid3Address : UInt8
+  mut version : Version
+  mut realSID : Bool
+  mut digiMode : Bool
+  mut loadAddress : Int
+  mut initAddress : Int
+  mut playAddress : Int
+  mut endAddress : Int
+  mut title : String
+  mut author : String
+  mut info : String
+  mut songs : UInt16
+  mut defaultSong : UInt16
+  mut flags : Flags
+  mut startPage : UInt8
+  mut pageLength : UInt8
+  mut sid2Flags : SIDFlags
+  mut sid3Flags : SIDFlags
+  mut sid4Flags : SIDFlags
+  mut sid2Address : UInt8
+  mut sid3Address : UInt8
 }
 impl PSID {
   new(Memory, FixedArray[Int]) -> Self!

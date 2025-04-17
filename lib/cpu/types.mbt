@@ -19,38 +19,38 @@ fn u8(self : UInt16) -> UInt8 {
 }
 
 ///|
-fn op_add(self : UInt8, other : UInt8) -> UInt8 {
+impl Add for UInt8 with op_add(self : UInt8, other : UInt8) -> UInt8 {
   self._ + other._ // FIXME: Overflow
 }
 
 ///|
-fn op_sub(self : UInt8, other : UInt8) -> UInt8 {
+impl Sub for UInt8 with op_sub(self : UInt8, other : UInt8) -> UInt8 {
   self._ - other._ // FIXME: Underflow
 }
 
 ///|
-fn op_mul(self : UInt8, other : UInt8) -> UInt8 {
+impl Mul for UInt8 with op_mul(self : UInt8, other : UInt8) -> UInt8 {
   self._ * other._ // FIXME: Overflow
 }
 
 ///|
-fn op_div(self : UInt8, other : UInt8) -> UInt8 {
+impl Div for UInt8 with op_div(self : UInt8, other : UInt8) -> UInt8 {
   self._ / other._ // FIXME: Underflow
 }
 
 ///|
-fn op_mod(self : UInt8, other : UInt8) -> UInt8 {
+impl Mod for UInt8 with op_mod(self : UInt8, other : UInt8) -> UInt8 {
   self._ % other._
 }
 
 ///|
-fn op_shl(self : UInt8, bit : UInt8) -> UInt8 {
-  self._ << bit._
+impl Shl for UInt8 with op_shl(self : UInt8, bit : Int) -> UInt8 {
+  self._ << bit
 }
 
 ///|
-fn op_shr(self : UInt8, bit : UInt8) -> UInt8 {
-  self._ >> bit._
+impl Shr for UInt8 with op_shr(self : UInt8, bit : Int) -> UInt8 {
+  self._ >> bit
 }
 
 ///|
@@ -60,19 +60,19 @@ fn flip(self : UInt8, other : UInt8) -> UInt8 {
 
 // bitwise and
 ///|
-fn land(self : UInt8, other : UInt8) -> UInt8 {
+impl BitAnd for UInt8 with land(self : UInt8, other : UInt8) -> UInt8 {
   self._ & other._
 }
 
 // bitwise or
 ///|
-fn lor(self : UInt8, bit : UInt8) -> UInt8 {
+impl BitOr for UInt8 with lor(self : UInt8, bit : UInt8) -> UInt8 {
   self._ | bit._
 }
 
 // bitwise xor
 ///|
-fn lxor(self : UInt8, bit : UInt8) -> UInt8 {
+impl BitXOr for UInt8 with lxor(self : UInt8, bit : UInt8) -> UInt8 {
   self._ ^ bit._
 }
 
@@ -83,12 +83,12 @@ pub fn bit(self : UInt8, bit : UInt8) -> Bool {
   //   println("UInt8::bit out of bounds")
   //   abort("out of bounds")
   // }
-  ((self >> bit) & 1) == 1
+  ((self >> bit._) & 1) == 1
 }
 
 ///|
 fn bitn(self : UInt8, bit : UInt8) -> UInt8 {
-  (self >> bit) & 1
+  (self >> bit._) & 1
 }
 
 ///|
@@ -171,50 +171,50 @@ fn u16(self : UInt8) -> UInt16 {
 }
 
 ///|
-fn UInt16::op_add(self : UInt16, other : UInt16) -> UInt16 {
+impl Add for UInt16 with op_add(self : UInt16, other : UInt16) -> UInt16 {
   self._ + other._ |> u16 // handle overflow
 }
 
 ///|
-fn UInt16::op_sub(self : UInt16, other : UInt16) -> UInt16 {
+impl Sub for UInt16 with op_sub(self : UInt16, other : UInt16) -> UInt16 {
   self._ - other._ |> u16 // handle underflow
 }
 
 ///|
-fn UInt16::op_mul(self : UInt16, other : UInt16) -> UInt16 {
+impl Mul for UInt16 with op_mul(self : UInt16, other : UInt16) -> UInt16 {
   self._ * other._ |> u16 // handle overflow
 }
 
 ///|
-fn UInt16::op_div(self : UInt16, other : UInt16) -> UInt16 {
+impl Div for UInt16 with op_div(self : UInt16, other : UInt16) -> UInt16 {
   self._ / other._ |> u16 // handle underflow
 }
 
 ///|
-fn UInt16::op_shl(self : UInt16, bit : UInt16) -> UInt16 {
-  self._ << bit._ |> u16
+impl Shl for UInt16 with op_shl(self : UInt16, bit : Int) -> UInt16 {
+  self._ << bit |> u16
 }
 
 ///|
-fn UInt16::op_shr(self : UInt16, bit : UInt16) -> UInt16 {
-  self._ >> bit._ |> u16
+impl Shr for UInt16 with op_shr(self : UInt16, bit : Int) -> UInt16 {
+  self._ >> bit |> u16
 }
 
 // bitwise and
 ///|
-fn UInt16::land(self : UInt16, other : UInt16) -> UInt16 {
+impl BitAnd for UInt16 with land(self : UInt16, other : UInt16) -> UInt16 {
   self._ & other._
 }
 
 // bitwise or
 ///|
-fn UInt16::lor(self : UInt16, bit : UInt16) -> UInt16 {
+impl BitOr for UInt16 with lor(self : UInt16, bit : UInt16) -> UInt16 {
   self._ | bit._
 }
 
 // bitwise xor
 ///|
-fn UInt16::lxor(self : UInt16, bit : UInt16) -> UInt16 {
+impl BitXOr for UInt16 with lxor(self : UInt16, bit : UInt16) -> UInt16 {
   self._ ^ bit._
 }
 

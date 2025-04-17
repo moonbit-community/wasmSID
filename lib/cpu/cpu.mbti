@@ -1,6 +1,69 @@
-package trancee/wasmSID/lib/cpu
+package "trancee/wasmSID/lib/cpu"
 
 // Values
+const B : Int = 0b00010000
+
+const C : Int = 0b00000001
+
+const D : Int = 0b00001000
+
+const I : Int = 0b00000100
+
+const N : Int = 0b10000000
+
+const U : Int = 0b00100000
+
+const V : Int = 0b01000000
+
+const Z : Int = 0b00000010
+
+fn bit(UInt8, UInt8) -> Bool
+
+fn clear_flags(CPU) -> Unit
+
+fn clear_registers(CPU) -> Unit
+
+fn debug(CPU, Bool) -> Bool
+
+fn get_registers(CPU) -> Registers
+
+fn interrupts(CPU) -> Bool
+
+fn irq(CPU, pc? : Int) -> Unit
+
+fn load(CPU, Int, FixedArray[Int], length~ : Int = .., has_load_address~ : Bool = ..) -> Int
+
+fn nmi(CPU, pc? : Int) -> Unit
+
+fn push(CPU, UInt8, dummy~ : Bool = ..) -> Unit
+
+fn push16(CPU, UInt16) -> Unit
+
+fn read(CPU, UInt16, dummy~ : Bool = ..) -> UInt8
+
+fn register(CPU, Register, Int) -> Unit
+
+fn setIRQ(CPU, UInt16) -> Unit
+
+fn setNMI(CPU, UInt16) -> Unit
+
+fn set_interrupt(Flags) -> Unit
+
+fn set_irq(CPU, state~ : Bool = ..) -> Unit
+
+fn set_nmi(CPU, state~ : Bool = ..) -> Unit
+
+fn set_read(CPU, (Int, Bool) -> Int) -> Unit
+
+fn set_write(CPU, (Int, Int, Bool) -> Unit) -> Unit
+
+fn step(CPU) -> Int
+
+fn to_hex(UInt8) -> String
+
+fn write(CPU, UInt16, UInt8, dummy~ : Bool = ..) -> Unit
+
+fn write16(CPU, UInt16, UInt16, dummy~ : Bool = ..) -> Unit
 
 // Types and methods
 type AddressHook
@@ -40,21 +103,6 @@ impl CPU {
   write(Self, UInt16, UInt8, dummy~ : Bool = ..) -> Unit
   write16(Self, UInt16, UInt16, dummy~ : Bool = ..) -> Unit
 }
-
-pub(all) enum Flag {
-  C
-  Z
-  I
-  D
-  B
-  U
-  V
-  N
-}
-impl Flag {
-  lor(Self, Self) -> Int
-}
-impl Eq for Flag
 
 type Flags
 impl Flags {
@@ -103,6 +151,7 @@ type Vector
 impl Eq for Vector
 
 // Type aliases
+pub typealias Flag = Int
 
 // Traits
 trait U16
