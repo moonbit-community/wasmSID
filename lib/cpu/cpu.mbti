@@ -21,8 +21,6 @@ const Z : Int = 0b00000010
 // Errors
 
 // Types and methods
-type AddressHook
-
 type CPU
 fn CPU::a(Self) -> UInt8
 fn CPU::clear_flags(Self) -> Unit
@@ -64,12 +62,6 @@ fn Flags::set_interrupt(Self) -> Unit
 impl Eq for Flags
 impl Show for Flags
 
-type Instruction
-
-type Mode
-impl Eq for Mode
-impl Show for Mode
-
 pub(all) enum Register {
   SP
   A
@@ -82,6 +74,7 @@ type Registers
 pub(all) struct UInt16(Int)
 fn UInt16::inner(Self) -> Int
 fn UInt16::to_hex(Self) -> String
+fn UInt16::u8(Self) -> UInt8
 impl Compare for UInt16
 impl Default for UInt16
 impl Eq for UInt16
@@ -96,14 +89,9 @@ impl Default for UInt8
 impl Eq for UInt8
 impl Show for UInt8
 
-type Vector
-impl Eq for Vector
-
 // Type aliases
 pub typealias Int as Flag
 
 // Traits
 trait U16
-
-trait U8
 

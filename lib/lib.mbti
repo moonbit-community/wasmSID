@@ -390,10 +390,6 @@ pub(all) struct Flags {
 impl Eq for Flags
 impl Show for Flags
 
-type FrameRate
-impl Eq for FrameRate
-impl Show for FrameRate
-
 type Hook
 
 pub(all) struct ICR(UInt8)
@@ -506,14 +502,6 @@ type SIDspecs
 type SIDwavOutput
 impl Default for SIDwavOutput
 
-type ScanLineCycles
-impl Eq for ScanLineCycles
-impl Show for ScanLineCycles
-
-type ScanLines
-impl Eq for ScanLines
-impl Show for ScanLines
-
 type SerialMode
 impl Eq for SerialMode
 impl Show for SerialMode
@@ -521,10 +509,6 @@ impl Show for SerialMode
 type TimeOfDay
 impl Default for TimeOfDay
 impl Show for TimeOfDay
-
-type Timer
-impl Default for Timer
-impl Show for Timer
 
 type TimerAInputMode
 impl Eq for TimerAInputMode

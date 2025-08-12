@@ -22,7 +22,7 @@ let cia_mem_end = 0xDDFF
 let cia_mem_size = 0x00FF
 
 ///|
-struct Timer {
+priv struct Timer {
   mut latch : Int
   mut counter : Int
   // mut underflow : Bool

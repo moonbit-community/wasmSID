@@ -1,5 +1,5 @@
 ///|
-struct AddressHook {
+priv struct AddressHook {
   address : Int
   hook : (Int) -> Unit
 }
@@ -8,12 +8,6 @@ struct AddressHook {
 fn AddressHook::new(address : Int, hook : (Int) -> Unit) -> AddressHook {
   { address, hook }
 }
-
-///|
-let cpu_mem_start = 0x0000
-
-///|
-let cpu_mem_end = 0xFFFF
 
 ///|
 let cpu_mem_size = 0xFFFF
@@ -118,7 +112,7 @@ pub fn debug(self : CPU, state : Bool) -> Bool {
 /// routines that handle processing under three special sets of circumstances. The chip
 /// automatically causes a JMP through one of these vectors when external hardware
 /// sends a Signal on the 6510/6502's NMI, RESET, or IRQ lines.
-enum Vector {
+priv enum Vector {
   None
   /// When the 6510/6502 receives an NMI (Non-Maskable
   /// Interrupt) signal, it causes a jump to the address held
@@ -276,8 +270,10 @@ fn read16(self : CPU, addr : UInt16, dummy~ : Bool = false) -> UInt16 {
   // println(
   //   "$" + u16(addr).to_hex() + " → " + self.mem[addr + 1].to_hex() + self.mem[addr].to_hex(),
   // )
-  (self.read(addr.inner(), dummy~) | (self.read(addr.inner() + 1, dummy~) << 8))
-  |> u16
+  UInt16(
+    self.read(addr.inner(), dummy~).inner() |
+    (self.read(addr.inner() + 1, dummy~).inner() << 8),
+  )
 }
 
 ///|
@@ -288,12 +284,15 @@ fn read16zp(self : CPU, addr : UInt16, dummy~ : Bool = false) -> UInt16 {
   //     (addr + 1)&(0x00FF) | addr&(0xFF00),
   //   ).to_hex()),
   // )
-  (self.read(addr.inner(), dummy~) |
-  (
-    self.read(((addr.inner() + 1) & 0x00FF) | (addr.inner() & 0xFF00), dummy~) <<
-    8
-  ))
-  |> u16
+  UInt16(
+    self.read(addr.inner(), dummy~).inner() |
+    (
+      self
+      .read(((addr.inner() + 1) & 0x00FF) | (addr.inner() & 0xFF00), dummy~)
+      .inner() <<
+      8
+    ),
+  )
 }
 
 ///|
@@ -344,7 +343,7 @@ fn pop(self : CPU, dummy~ : Bool = false) -> UInt8 {
 
 ///|
 fn pop16(self : CPU) -> UInt16 {
-  (self.pop() | (self.pop() << 8)) |> u16
+  UInt16(self.pop().inner() | (self.pop().inner() << 8))
 }
 
 ///|
@@ -364,7 +363,7 @@ pub fn nmi(self : CPU, pc? : Int) -> Unit {
   self.push16(self.pc)
   self.push(self.flags.get())
   self.flags.set_interrupt()
-  self.pc = pc.or(self.read16(NMI.addr()).inner())
+  self.pc = pc.unwrap_or(self.read16(NMI.addr()).inner())
   self.cycles += 7
 }
 
@@ -385,7 +384,7 @@ pub fn irq(self : CPU, pc? : Int) -> Unit {
   self.push16(self.pc)
   self.push(self.flags.get())
   self.flags.set_interrupt()
-  self.pc = pc.or(self.read16(IRQ.addr()).inner())
+  self.pc = pc.unwrap_or(self.read16(IRQ.addr()).inner())
   self.cycles += 7
 }
 
@@ -767,7 +766,7 @@ fn compare(self : CPU, a : UInt8, b : UInt8) -> Unit {
 ///
 /// Note on the MOS 6502:
 /// In decimal mode, the `N`, `V` and `Z` flags are not consistent with the decimal result.
-fn opADC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
+fn opADC(self : CPU, addr : UInt16, _mode : Mode) -> Unit {
   let a = self.registers[A]
   let b = self.read(addr)
   let c = self.flags[C].to_int()
@@ -809,7 +808,7 @@ fn opADC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 /// This instruction affects the accumulator;
 /// sets the `Z` flag if the result in the accumulator is `0`, otherwise resets the `Z` flag;
 /// sets the `N` flag if the result in the accumulator has bit `7` on, otherwise resets the `N` flag.
-fn opAND(self : CPU, addr : UInt16, mode : Mode) -> Unit {
+fn opAND(self : CPU, addr : UInt16, _mode : Mode) -> Unit {
   self.registers[A] = self.registers[A] & self.read(addr)
   self.flags.setZN(self.registers[A])
 }
@@ -832,13 +831,13 @@ fn opASL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   match mode {
     Accumulator => {
       self.flags.setC((self.registers[A] & N) != 0)
-      self.registers[A] = (self.registers[A].inner() << 1) |> u8 // overflow
+      self.registers[A] = UInt8(self.registers[A].inner() << 1) // overflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
       self.flags.setC((value & N) != 0)
-      value = (value.inner() << 1) |> u8 // overflow
+      value = UInt8(value.inner() << 1) // overflow
       self.write(addr, value)
       self.flags.setZN(value)
     }
@@ -973,28 +972,28 @@ fn opBVS(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 // CLC - Clear carry flag
 
 ///|
-fn opCLC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
+fn opCLC(self : CPU, _addr : UInt16, _mode : Mode) -> Unit {
   self.flags.clear_carry()
 }
 
 // CLD - Clear decimal mode
 
 ///|
-fn opCLD(self : CPU, addr : UInt16, mode : Mode) -> Unit {
+fn opCLD(self : CPU, _addr : UInt16, _mode : Mode) -> Unit {
   self.flags.clear_decimal()
 }
 
 // CLI - Clear interrupt disable
 
 ///|
-fn opCLI(self : CPU, addr : UInt16, mode : Mode) -> Unit {
+fn opCLI(self : CPU, _addr : UInt16, _mode : Mode) -> Unit {
   self.flags.clear_interrupt()
 }
 
 // CLV - Clear overflow flag
 
 ///|
-fn opCLV(self : CPU, addr : UInt16, mode : Mode) -> Unit {
+fn opCLV(self : CPU, _addr : UInt16, _mode : Mode) -> Unit {
   self.flags.clear_overflow()
 }
 
@@ -1156,7 +1155,7 @@ fn opLSR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 // NOP - No operation
 
 ///|
-fn opNOP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
+fn opNOP(_self : CPU, _addr : UInt16, _mode : Mode) -> Unit {
   //
 }
 
@@ -1845,7 +1844,7 @@ fn opXAA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 ///|
-enum Mode {
+priv enum Mode {
   None
   Absolute // 0
   AbsoluteX // 1
@@ -2141,7 +2140,7 @@ let instructions : FixedArray[
 ]
 
 ///|
-enum Instruction {
+priv enum Instruction {
   // LDA
   LDA_IM // 0xA9
   // LDA_ZP // 0xA5

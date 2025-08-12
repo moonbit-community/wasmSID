@@ -97,7 +97,7 @@ test "CPUClock::PAL shift left" {
 }
 
 ///|
-struct ScanLines(VideoStandard) derive(Show, Eq)
+priv struct ScanLines(VideoStandard) derive(Show, Eq)
 
 ///|
 fn ScanLines::to_int(self : ScanLines) -> Int raise {
@@ -142,7 +142,7 @@ test "error ScanLines::Both" {
 }
 
 ///|
-struct ScanLineCycles(VideoStandard) derive(Show, Eq)
+priv struct ScanLineCycles(VideoStandard) derive(Show, Eq)
 
 ///|
 fn ScanLineCycles::to_int(self : ScanLineCycles) -> Int raise {
@@ -190,7 +190,7 @@ test "error ScanLineCycles::Both" {
 }
 
 ///|
-struct FrameRate(VideoStandard) derive(Show, Eq)
+priv struct FrameRate(VideoStandard) derive(Show, Eq)
 
 ///|
 fn FrameRate::to_int(self : FrameRate) -> Int raise {

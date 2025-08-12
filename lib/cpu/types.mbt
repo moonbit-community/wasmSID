@@ -9,12 +9,7 @@ let s = "0123456789ABCDEF"
 pub(all) struct UInt8(Int) derive(Show, Eq, Compare, Default)
 
 ///|
-trait U8 {
-  u8(Self) -> UInt8
-}
-
-///|
-fn u8(self : UInt16) -> UInt8 {
+pub fn u8(self : UInt16) -> UInt8 {
   self.inner() & 0xFF
 }
 
@@ -176,32 +171,32 @@ fn u16(self : UInt8) -> UInt16 {
 
 ///|
 impl Add for UInt16 with op_add(self : UInt16, other : UInt16) -> UInt16 {
-  (self.inner() + other.inner()) |> u16 // handle overflow
+  UInt16(self.inner() + other.inner()) // handle overflow
 }
 
 ///|
 impl Sub for UInt16 with op_sub(self : UInt16, other : UInt16) -> UInt16 {
-  (self.inner() - other.inner()) |> u16 // handle underflow
+  UInt16(self.inner() - other.inner()) // handle underflow
 }
 
 ///|
 impl Mul for UInt16 with op_mul(self : UInt16, other : UInt16) -> UInt16 {
-  (self.inner() * other.inner()) |> u16 // handle overflow
+  UInt16(self.inner() * other.inner()) // handle overflow
 }
 
 ///|
 impl Div for UInt16 with op_div(self : UInt16, other : UInt16) -> UInt16 {
-  (self.inner() / other.inner()) |> u16 // handle underflow
+  UInt16(self.inner() / other.inner()) // handle underflow
 }
 
 ///|
 impl Shl for UInt16 with op_shl(self : UInt16, bit : Int) -> UInt16 {
-  (self.inner() << bit) |> u16
+  UInt16(self.inner() << bit)
 }
 
 ///|
 impl Shr for UInt16 with op_shr(self : UInt16, bit : Int) -> UInt16 {
-  (self.inner() >> bit) |> u16
+  UInt16(self.inner() >> bit)
 }
 
 // bitwise and
