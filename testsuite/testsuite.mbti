@@ -1,3 +1,4 @@
+// Generated using `moon info`, DON'T EDIT IT
 package "trancee/wasmSID/testsuite"
 
 // Values
@@ -530,6 +531,8 @@ let txan : FixedArray[Int]
 let txsn : FixedArray[Int]
 
 let tyan : FixedArray[Int]
+
+// Errors
 
 // Types and methods
 
