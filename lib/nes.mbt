@@ -10,7 +10,7 @@ pub fn NES::new(
   baseaddress~ : Int = 0x0000,
   data~ : FixedArray[Int] = [],
   addr~ : Int = 0x0000,
-  length~ : Int = data.length()
+  length~ : Int = data.length(),
 ) -> NES {
   let cpu = @cpu.CPU::new(pc=baseaddress, decimal_mode=false)
   let mem = Memory::new()
@@ -24,7 +24,7 @@ pub fn load(
   self : NES,
   data : FixedArray[Int],
   addr~ : Int = 0,
-  length~ : Int = data.length()
+  length~ : Int = data.length(),
 ) -> Unit {
   let addr = self.cpu.load(addr, data, length~)
 

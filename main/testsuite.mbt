@@ -632,7 +632,7 @@ fn load(c64 : @lib.C64, data : FixedArray[Int]) -> Unit {
     }
   })
   c64.hook(0xFFD2, fn(pc) {
-    let a = c64.cpu.a()._
+    let a = c64.cpu.a().inner()
     match a {
       13 => {
         println("\x1b[33m\{output}\x1b[0m")

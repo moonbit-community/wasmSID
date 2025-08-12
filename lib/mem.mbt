@@ -63,7 +63,7 @@ fn Hook::new(
   end : Int,
   //
   read : (UInt16, Bool) -> UInt8,
-  write : (UInt16, UInt8, Bool) -> Unit
+  write : (UInt16, UInt8, Bool) -> Unit,
 ) -> Hook {
   { start, end, read, write }
 }
@@ -93,7 +93,7 @@ pub fn hook(
   end : Int,
   //
   read : (UInt16, Bool) -> UInt8,
-  write : (UInt16, UInt8, Bool) -> Unit
+  write : (UInt16, UInt8, Bool) -> Unit,
 ) -> Unit {
   self.hooks.push(Hook::new(start, end, read, write))
 }
@@ -165,7 +165,7 @@ fn dump(
   self : Memory,
   addr~ : UInt16 = 0x0000,
   cols~ : Int = 0x10,
-  rows~ : Int = 0x10
+  rows~ : Int = 0x10,
 ) -> Unit {
   let mut i = 0
   let mut str = ""
@@ -184,7 +184,7 @@ fn dump(
       }
       str = (addr + i).to_hex() + "|"
     }
-    str += self.mem[(addr + i)._].to_hex() + " "
+    str += self.mem[(addr + i).inner()].to_hex() + " "
     i = i + 1
   }
 }
@@ -193,7 +193,7 @@ fn dump(
 pub fn Memory::read(
   self : Memory,
   address : UInt16,
-  dummy~ : Bool = false
+  dummy~ : Bool = false,
 ) -> UInt8 {
   // let _dummy = if dummy { "🔍" } else { "" }
   // println("Memory::read $\{u16(addr).to_hex()} \{_dummy}")
@@ -226,7 +226,7 @@ pub fn Memory::read_direct(self : Memory, address : UInt16) -> UInt8 {
   //   None => self.mem[addr._]
   // }
 
-  self.mem[address._]
+  self.mem[address.inner()]
 }
 
 // fn op_get(self : Memory, addr : UInt16) -> UInt8 {
@@ -243,7 +243,7 @@ pub fn Memory::write(
   address : UInt16,
   value : UInt8,
   //
-  dummy~ : Bool = false
+  dummy~ : Bool = false,
 ) -> Unit {
   // let _dummy = if dummy { "🔍" } else { "" }
   // println(
@@ -272,14 +272,14 @@ pub fn Memory::write(
 pub fn Memory::write_direct(
   self : Memory,
   address : UInt16,
-  value : UInt8
+  value : UInt8,
 ) -> Unit {
   // match self.write {
   //   Some(_) => self.write(addr, value)
   //   None => self.mem[addr._] = value._ |> u8
   // }
 
-  self.mem[address._] = value
+  self.mem[address.inner()] = value
 }
 
 // fn op_set(self : Memory, addr : UInt16, value : UInt8) -> Unit {

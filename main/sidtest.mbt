@@ -6,9 +6,7 @@ pub fn sidtest() -> Unit {
   let mem = @lib.Memory::new()
 
   //
-  let psid = try {
-    @lib.PSID::new!(mem, siddata)
-  } catch {
+  let psid = @lib.PSID::new(mem, siddata) catch {
     err => {
       println(err)
       panic()
@@ -16,9 +14,7 @@ pub fn sidtest() -> Unit {
   }
 
   //
-  try {
-    psid.process!()
-  } catch {
+  psid.process() catch {
     err => {
       println(err)
       panic()
@@ -63,8 +59,8 @@ pub fn sidtest() -> Unit {
       s += "(IRQ), "
     }
   }
-  let song = psid.defaultSong._
-  let songs = psid.songs._
+  let song = psid.defaultSong.inner()
+  let songs = psid.songs.inner()
   s += "Subtune:\{song} (of \{songs})"
   if psid.realSID {
     s += ", RealSID"
@@ -90,8 +86,8 @@ fn initSIDtune(c64 : @lib.C64, psid : @lib.PSID, subtune : Int) -> Unit {
   let mut subtune = subtune
   if subtune == 0 {
     subtune = 1
-  } else if subtune > psid.songs._ {
-    subtune = psid.songs._
+  } else if subtune > psid.songs.inner() {
+    subtune = psid.songs.inner()
   }
 
   //determine init-address:

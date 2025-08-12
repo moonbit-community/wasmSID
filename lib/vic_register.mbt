@@ -41,7 +41,6 @@ struct ControlRegister {
   mut blankScreen : Bool
   mut bitmapMode : Bool
   mut extendedColorMode : Bool
-
   /// SCROLX
   mut columnDisplay : Bool
   mut multicolorMode : Bool
@@ -64,27 +63,21 @@ struct VICRegister {
   spriteMode : FixedArray[Bool]
   spriteCollide : FixedArray[Bool]
   spritesCollide : FixedArray[Bool]
-
   ///
   mut borderColor : Color
   backgroundColor : FixedArray[Color]
   spriteMulticolor : FixedArray[Color]
   spriteColor : FixedArray[Color]
-
   ///
   scroll : Coordinate
-
   ///
   controlRegister : ControlRegister
   interruptFlag : InterruptFlag
   interruptEnable : InterruptEnable
-
   ///
   mut rasterScanLine : Int
-
   ///
   lightPen : Coordinate
-
   ///
   mut characterDataArea : Int
   mut videoMatrixArea : Int
@@ -140,57 +133,47 @@ enum VICregister {
   SP0X
   /// Sprite 0 Vertical Position
   SP0Y
-
   /// $02 - $03
   /// Sprite 1 Horizontal Position
   SP1X
   /// Sprite 1 Vertical Position
   SP1Y
-
   /// $04 - $05
   /// Sprite 2 Horizontal Position
   SP2X
   /// Sprite 2 Vertical Position
   SP2Y
-
   /// $06 - $07
   /// Sprite 3 Horizontal Position
   SP3X
   /// Sprite 3 Vertical Position
   SP3Y
-
   /// $08 - $09
   /// Sprite 4 Horizontal Position
   SP4X
   /// Sprite 4 Vertical Position
   SP4Y
-
   /// $0A - $0B
   /// Sprite 5 Horizontal Position
   SP5X
   /// Sprite 5 Vertical Position
   SP5Y
-
   /// $0C - $0D
   /// Sprite 6 Horizontal Position
   SP6X
   /// Sprite 6 Vertical Position
   SP6Y
-
   /// $0E - $0F
   /// Sprite 7 Horizontal Position
   SP7X
   /// Sprite 7 Vertical Position
   SP7Y
-
   /// $10
   /// Most Significant Bits of Sprites 0-7 Horizontal Position
   MSIGX
-
   /// $11
   /// Vertical Fine Scrolling and Control Register
   SCROLY
-
   /// $12
   /// Read Current Raster Scan Line/Write Line to Compare for Raster IRQ
   RASTER
@@ -203,37 +186,30 @@ enum VICregister {
   LPENX
   /// Light Pen Vertical Position
   LPENY
-
   /// $15
   /// Sprite Enable Register
   SPENA
-
   /// $16
   /// Horizontal Fine Scrolling and Control Register
   SCROLX
-
   /// $17
   /// Sprite Vertical Expansion Register
   YXPAND
-
   /// $18
   /// VIC-II Chip Memory Control Register
   VMCSB
-
   /// $19
   /// VIC Interrupt Flag Register
   VICIRQ
   /// $1A
   /// IRQ Mask Register
   IRQMASK
-
   /// $1B
   /// Sprite to Foreground Display Priority Register
   SPBGPR
   /// $1C
   /// Sprite Multicolor Registers
   SPMC
-
   /// $1D
   /// Sprite Horizontal Expansion Register
   XXPAND
@@ -286,7 +262,6 @@ enum VICregister {
   SP6COL
   /// Sprite 7 Color Register (the default color value is 12, medium gray)
   SP7COL
-
   ///
   UNUSED
 } derive(Show, Compare, Eq)
@@ -356,7 +331,7 @@ fn vic(register : VICregister) -> Int {
 }
 
 ///|
-fn VICregister::from_int(value : Int) -> VICregister! {
+fn VICregister::from_int(value : Int) -> VICregister raise {
   match value {
     0x00 => SP0X
     0x01 => SP0Y
@@ -453,7 +428,7 @@ enum ControlRegisterVertical {
 ///|
 fn ControlRegisterVertical::op_get(
   self : ControlRegisterVertical,
-  flag : ControlRegisterVertical
+  flag : ControlRegisterVertical,
 ) -> Int {
   match flag {
     /// Raster Compare: (Bit 8)	See $D012
@@ -478,17 +453,24 @@ fn cr(flag : ControlRegisterVertical) -> Int {
 
 ///|
 enum ControlRegisterHorizontal {
-  Unused /// 	7-6	Unused
-  MultiColorMode /// 	4	  Multi-Color Mode: 1 = Enable (Text or Bit-Map)
-  SelectColumnTextDisplay /// 	3	  Select 38/40 Column Text Display: 1 = 40 Cols
-  SmoothScrollXPos /// 	2-0	Smooth Scroll to X Pos
+  /// 	7-6	Unused
+  /// 	4	  Multi-Color Mode: 1 = Enable (Text or Bit-Map)
+  /// 	3	  Select 38/40 Column Text Display: 1 = 40 Cols
+  /// 	2-0	Smooth Scroll to X Pos
+  Unused
+  MultiColorMode
+  SelectColumnTextDisplay
+  SmoothScrollXPos
 }
 
 ///|
 enum MemoryControlRegister {
-  VideoMatrixBaseAddress /// 	7-4	Video Matrix Base Address (inside VIC)
-  CharacterDotDataBaseAddress /// 	3-1	Character Dot-Data Base	Address (inside VIC)
-  SelectCharacterSet /// 	0	  Select upper/lower Character Set
+  /// 	7-4	Video Matrix Base Address (inside VIC)
+  /// 	3-1	Character Dot-Data Base	Address (inside VIC)
+  /// 	0	  Select upper/lower Character Set
+  VideoMatrixBaseAddress
+  CharacterDotDataBaseAddress
+  SelectCharacterSet
 }
 
 // enum InterruptFlagRegister {

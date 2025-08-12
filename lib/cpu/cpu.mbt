@@ -51,7 +51,7 @@ pub fn CPU::new(
   //
   decimal_mode~ : Bool = true,
   //
-  debug~ : Bool = false
+  debug~ : Bool = false,
 ) -> CPU {
   let registers = Registers::new()
   let flags = Flags::new()
@@ -222,7 +222,7 @@ pub fn CPU::hook(self : CPU, address : Int, hook : (Int) -> Unit) -> Unit {
 
 ///|
 pub fn CPU::pc(self : CPU) -> Int {
-  self.pc._
+  self.pc.inner()
 }
 
 ///|
@@ -236,6 +236,7 @@ pub fn register(self : CPU, register : Register, value : Int) -> Unit {
 }
 
 // Load a program into memory
+
 ///|
 pub fn load(
   self : CPU,
@@ -245,7 +246,7 @@ pub fn load(
   data : FixedArray[Int],
   length~ : Int = data.length(),
   //
-  has_load_address~ : Bool = false
+  has_load_address~ : Bool = false,
 ) -> Int {
   // println(
   //   "CPU::load $" + UInt16(offset).to_hex() + " - $" + UInt16(length).to_hex(),
@@ -265,8 +266,8 @@ pub fn load(
 ///|
 pub fn read(self : CPU, addr : UInt16, dummy~ : Bool = false) -> UInt8 {
   match self.read {
-    Some(read) => read(addr._, dummy)
-    None => self.mem[addr._]
+    Some(read) => read(addr.inner(), dummy)
+    None => self.mem[addr.inner()]
   }
 }
 
@@ -275,7 +276,8 @@ fn read16(self : CPU, addr : UInt16, dummy~ : Bool = false) -> UInt16 {
   // println(
   //   "$" + u16(addr).to_hex() + " → " + self.mem[addr + 1].to_hex() + self.mem[addr].to_hex(),
   // )
-  self.read(addr._, dummy~) | (self.read(addr._ + 1, dummy~) << 8) |> u16
+  (self.read(addr.inner(), dummy~) | (self.read(addr.inner() + 1, dummy~) << 8))
+  |> u16
 }
 
 ///|
@@ -286,8 +288,11 @@ fn read16zp(self : CPU, addr : UInt16, dummy~ : Bool = false) -> UInt16 {
   //     (addr + 1)&(0x00FF) | addr&(0xFF00),
   //   ).to_hex()),
   // )
-  self.read(addr._, dummy~) |
-  (self.read(((addr._ + 1) & 0x00FF) | (addr._ & 0xFF00), dummy~) << 8)
+  (self.read(addr.inner(), dummy~) |
+  (
+    self.read(((addr.inner() + 1) & 0x00FF) | (addr.inner() & 0xFF00), dummy~) <<
+    8
+  ))
   |> u16
 }
 
@@ -296,11 +301,11 @@ pub fn write(
   self : CPU,
   addr : UInt16,
   value : UInt8,
-  dummy~ : Bool = false
+  dummy~ : Bool = false,
 ) -> Unit {
   match self.write {
-    Some(write) => write(addr._, value._, dummy)
-    None => self.mem[addr._] = value._
+    Some(write) => write(addr.inner(), value.inner(), dummy)
+    None => self.mem[addr.inner()] = value.inner()
   }
   // println("$" + u16(addr).to_hex() + " ← " + self.mem[addr].to_hex())
 }
@@ -310,10 +315,10 @@ pub fn write16(
   self : CPU,
   addr : UInt16,
   value : UInt16,
-  dummy~ : Bool = false
+  dummy~ : Bool = false,
 ) -> Unit {
-  self.write(addr._, value._, dummy~)
-  self.write(addr._ + 1, value._ >> 8, dummy~)
+  self.write(addr.inner(), value.inner(), dummy~)
+  self.write(addr.inner() + 1, value.inner() >> 8, dummy~)
   // println(
   //   "$" + u16(addr).to_hex() + " ← " + self.mem[addr + 1].to_hex() + self.mem[addr].to_hex(),
   // )
@@ -321,25 +326,25 @@ pub fn write16(
 
 ///|
 pub fn push(self : CPU, value : UInt8, dummy~ : Bool = false) -> Unit {
-  self.write(self.registers[SP]._ | 0x0100, value._, dummy~)
+  self.write(self.registers[SP].inner() | 0x0100, value.inner(), dummy~)
   self.registers[SP] -= 1
 }
 
 ///|
 pub fn push16(self : CPU, value : UInt16) -> Unit {
-  self.push(value._ >> 8)
-  self.push(value._)
+  self.push(value.inner() >> 8)
+  self.push(value.inner())
 }
 
 ///|
 fn pop(self : CPU, dummy~ : Bool = false) -> UInt8 {
   self.registers[SP] += 1
-  self.read(self.registers[SP]._ | 0x0100, dummy~)
+  self.read(self.registers[SP].inner() | 0x0100, dummy~)
 }
 
 ///|
 fn pop16(self : CPU) -> UInt16 {
-  self.pop() | (self.pop() << 8) |> u16
+  (self.pop() | (self.pop() << 8)) |> u16
 }
 
 ///|
@@ -359,7 +364,7 @@ pub fn nmi(self : CPU, pc? : Int) -> Unit {
   self.push16(self.pc)
   self.push(self.flags.get())
   self.flags.set_interrupt()
-  self.pc = pc.or(self.read16(NMI.addr())._)
+  self.pc = pc.or(self.read16(NMI.addr()).inner())
   self.cycles += 7
 }
 
@@ -380,7 +385,7 @@ pub fn irq(self : CPU, pc? : Int) -> Unit {
   self.push16(self.pc)
   self.push(self.flags.get())
   self.flags.set_interrupt()
-  self.pc = pc.or(self.read16(IRQ.addr())._)
+  self.pc = pc.or(self.read16(IRQ.addr()).inner())
   self.cycles += 7
 }
 
@@ -404,7 +409,7 @@ pub fn step(self : CPU) -> Int {
   if not(self.interrupts()) {
     for i = 0; i < self.hooks.length(); i = i + 1 {
       if self.pc == self.hooks[i].address {
-        (self.hooks[i].hook)(self.pc._)
+        (self.hooks[i].hook)(self.pc.inner())
       }
     }
 
@@ -412,7 +417,7 @@ pub fn step(self : CPU) -> Int {
     let opcode = self.read(self.pc, dummy=true)
 
     //
-    let (name, op, mode, _size, _cycles, _, illegal) = instructions[opcode._]
+    let (name, op, mode, _size, _cycles, _, illegal) = instructions[opcode.inner()]
     if self.debug {
       self.dump_step(opcode, name, mode, _size, _cycles, illegal)
     }
@@ -443,20 +448,20 @@ fn get_addr(self : CPU, mode : Mode, dummy~ : Bool = true) -> UInt16 {
     Indirect => self.read16zp(self.read16(self.pc + 1, dummy~), dummy~)
     IndexedIndirect =>
       self.read16zp(
-        (self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF |> u16,
+        ((self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF) |> u16,
         dummy~,
       )
     IndirectIndexed =>
       self.read16zp(self.read(self.pc + 1, dummy~) |> u16, dummy~) +
-      self.registers[Y]._
+      self.registers[Y].inner()
     Absolute => self.read16(self.pc + 1, dummy~)
-    AbsoluteX => self.read16(self.pc + 1, dummy~) + self.registers[X]._
-    AbsoluteY => self.read16(self.pc + 1, dummy~) + self.registers[Y]._
-    ZeroPage => self.read(self.pc + 1, dummy~) & 0xFF |> u16
+    AbsoluteX => self.read16(self.pc + 1, dummy~) + self.registers[X].inner()
+    AbsoluteY => self.read16(self.pc + 1, dummy~) + self.registers[Y].inner()
+    ZeroPage => (self.read(self.pc + 1, dummy~) & 0xFF) |> u16
     ZeroPageX =>
-      (self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF |> u16
+      ((self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF) |> u16
     ZeroPageY =>
-      (self.read(self.pc + 1, dummy~) + self.registers[Y]) & 0xFF |> u16
+      ((self.read(self.pc + 1, dummy~) + self.registers[Y]) & 0xFF) |> u16
     Relative => self.pc + 2 + self.read(self.pc + 1, dummy~).to_signed()
     _ => {
       println("unknown CPU mode \{mode}")
@@ -473,7 +478,7 @@ fn dump_step(
   mode : Mode,
   size : Int,
   cycles : Int,
-  illegal : Bool
+  illegal : Bool,
 ) -> Unit {
   let dummy = true
   let read8 = fn() { "$" + self.read(self.pc + 1, dummy~).to_hex() }
@@ -529,7 +534,7 @@ fn dump_step(
       " = " +
       self
       .read16zp(
-        (self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF |> u16,
+        ((self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF) |> u16,
         dummy~,
       )
       .to_hex() +
@@ -537,7 +542,7 @@ fn dump_step(
       self
       .read(
         self.read16zp(
-          (self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF |> u16,
+          ((self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF) |> u16,
           dummy~,
         ),
       )
@@ -555,12 +560,12 @@ fn dump_step(
       self.read16zp(self.read(self.pc + 1, dummy~) |> u16, dummy~).to_hex() +
       " @ " +
       (self.read16zp(self.read(self.pc + 1, dummy~) |> u16, dummy~) +
-      self.registers[Y]._).to_hex() +
+      self.registers[Y].inner()).to_hex() +
       " = " +
       self
       .read(
         self.read16zp(self.read(self.pc + 1, dummy~) |> u16, dummy~) +
-        self.registers[Y]._,
+        self.registers[Y].inner(),
         dummy~,
       )
       .to_hex()
@@ -586,10 +591,13 @@ fn dump_step(
       " " +
       read16() +
       ",X @ " +
-      (self.read16(self.pc + 1, dummy~) + self.registers[X]._).to_hex() +
+      (self.read16(self.pc + 1, dummy~) + self.registers[X].inner()).to_hex() +
       " = " +
       self
-      .read(self.read16(self.pc + 1, dummy~) + self.registers[X]._, dummy~)
+      .read(
+        self.read16(self.pc + 1, dummy~) + self.registers[X].inner(),
+        dummy~,
+      )
       .to_hex()
     AbsoluteY =>
       // Indexed Absolute Addressing
@@ -600,10 +608,13 @@ fn dump_step(
       " " +
       read16() +
       ",Y @ " +
-      (self.read16(self.pc + 1, dummy~) + self.registers[Y]._).to_hex() +
+      (self.read16(self.pc + 1, dummy~) + self.registers[Y].inner()).to_hex() +
       " = " +
       self
-      .read(self.read16(self.pc + 1, dummy~) + self.registers[Y]._, dummy~)
+      .read(
+        self.read16(self.pc + 1, dummy~) + self.registers[Y].inner(),
+        dummy~,
+      )
       .to_hex()
     ZeroPage =>
       // Zeropage Addressing
@@ -614,7 +625,7 @@ fn dump_step(
       " " +
       read8() +
       " = " +
-      self.read(self.read(self.pc + 1, dummy~) & 0xFF |> u16, dummy~).to_hex()
+      self.read((self.read(self.pc + 1, dummy~) & 0xFF) |> u16, dummy~).to_hex()
     ZeroPageX =>
       // Indexed Zeropage Addressing
       // https://www.c64-wiki.com/wiki/Indexed_zeropage_addressing
@@ -628,7 +639,7 @@ fn dump_step(
       " = " +
       self
       .read(
-        (self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF |> u16,
+        ((self.read(self.pc + 1, dummy~) + self.registers[X]) & 0xFF) |> u16,
         dummy~,
       )
       .to_hex()
@@ -645,7 +656,7 @@ fn dump_step(
       " = " +
       self
       .read(
-        (self.read(self.pc + 1, dummy~) + self.registers[Y]) & 0xFF |> u16,
+        ((self.read(self.pc + 1, dummy~) + self.registers[Y]) & 0xFF) |> u16,
         dummy~,
       )
       .to_hex()
@@ -712,6 +723,7 @@ fn dump_step(
 }
 
 // page_boundary returns true if the two addresses reference different pages
+
 ///|
 fn page_boundary(a : UInt16, b : UInt16) -> Bool {
   (a & 0xFF00) != (b & 0xFF00)
@@ -719,6 +731,7 @@ fn page_boundary(a : UInt16, b : UInt16) -> Bool {
 
 // branch, then adds a cycle for taking a branch and adds another cycle
 // if the branch jumps to a new page
+
 ///|
 fn branch(self : CPU, addr : UInt16) -> Unit {
   if page_boundary(self.pc, addr) {
@@ -819,13 +832,13 @@ fn opASL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   match mode {
     Accumulator => {
       self.flags.setC((self.registers[A] & N) != 0)
-      self.registers[A] = self.registers[A]._ << 1 |> u8 // overflow
+      self.registers[A] = (self.registers[A].inner() << 1) |> u8 // overflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
       self.flags.setC((value & N) != 0)
-      value = value._ << 1 |> u8 // overflow
+      value = (value.inner() << 1) |> u8 // overflow
       self.write(addr, value)
       self.flags.setZN(value)
     }
@@ -833,6 +846,7 @@ fn opASL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BCC - Branch if carry clear
+
 ///|
 fn opBCC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.not_carry() {
@@ -841,6 +855,7 @@ fn opBCC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BCS - Branch if carry set
+
 ///|
 fn opBCS(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.carry() {
@@ -849,6 +864,7 @@ fn opBCS(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BEQ - Branch if equal
+
 ///|
 fn opBEQ(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.zero() {
@@ -857,6 +873,7 @@ fn opBEQ(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BIT - Bit test
+
 ///|
 fn opBIT(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let value = self.read(addr)
@@ -866,6 +883,7 @@ fn opBIT(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BMI - Branch if minus
+
 ///|
 fn opBMI(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.negative() {
@@ -874,6 +892,7 @@ fn opBMI(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BNE - Branch if minus
+
 ///|
 fn opBNE(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.not_zero() {
@@ -882,6 +901,7 @@ fn opBNE(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BPL - Branch if positive
+
 ///|
 fn opBPL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.not_negative() {
@@ -933,6 +953,7 @@ fn opBRK(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BVC - Branch if overflow clear
+
 ///|
 fn opBVC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.not_overflow() {
@@ -941,6 +962,7 @@ fn opBVC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // BVS - Branch if overflow set
+
 ///|
 fn opBVS(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   if self.flags.overflow() {
@@ -949,42 +971,49 @@ fn opBVS(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // CLC - Clear carry flag
+
 ///|
 fn opCLC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.flags.clear_carry()
 }
 
 // CLD - Clear decimal mode
+
 ///|
 fn opCLD(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.flags.clear_decimal()
 }
 
 // CLI - Clear interrupt disable
+
 ///|
 fn opCLI(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.flags.clear_interrupt()
 }
 
 // CLV - Clear overflow flag
+
 ///|
 fn opCLV(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.flags.clear_overflow()
 }
 
 // CMP - Compare
+
 ///|
 fn opCMP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.compare(self.registers[A], self.read(addr))
 }
 
 // CPX - Compare x register
+
 ///|
 fn opCPX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.compare(self.registers[X], self.read(addr))
 }
 
 // CPY - Compare y register
+
 ///|
 fn opCPY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.compare(self.registers[Y], self.read(addr))
@@ -998,14 +1027,16 @@ fn opCPY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 //
 // If the byte is taken as a signed integer, DEC will "count down" from +127 thru −128, or +$7F thru −$80.
 // If a byte already holding the value −128/−$80 is DECremented, it "wraps over" to the value +127/$7F.
+
 ///|
 fn opDEC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
-  let value = self.read(addr)._ - 1 |> u8 // underflow
+  let value = (self.read(addr).inner() - 1) |> u8 // underflow
   self.write(addr, value)
   self.flags.setZN(value)
 }
 
 // DEX - Decrement x register
+
 ///|
 fn opDEX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[X] -= 1 |> u8 // underflow
@@ -1013,6 +1044,7 @@ fn opDEX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // DEY - Decrement y register
+
 ///|
 fn opDEY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[Y] -= 1 |> u8 // underflow
@@ -1020,6 +1052,7 @@ fn opDEY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // EOR - Exclusive or
+
 ///|
 fn opEOR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[A] = self.registers[A] ^ self.read(addr)
@@ -1040,12 +1073,13 @@ fn opEOR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 ///
 /// https://www.pagetable.com/c64ref/6502/?tab=2#INC
 fn opINC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
-  let value = self.read(addr)._ + 1 |> u8 // overflow
+  let value = (self.read(addr).inner() + 1) |> u8 // overflow
   self.write(addr, value)
   self.flags.setZN(value)
 }
 
 // INX - Increment x register
+
 ///|
 fn opINX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[X] += 1 |> u8 // overflow
@@ -1053,6 +1087,7 @@ fn opINX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // INY - Increment y register
+
 ///|
 fn opINY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[Y] += 1 |> u8 // overflow
@@ -1060,12 +1095,14 @@ fn opINY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // JMP - Jump
+
 ///|
 fn opJMP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.pc = addr
 }
 
 // JSR - Jump to subroutine
+
 ///|
 fn opJSR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.push16(self.pc - 1)
@@ -1073,6 +1110,7 @@ fn opJSR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // LDA - Load accumulator
+
 ///|
 fn opLDA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[A] = self.read(addr)
@@ -1080,6 +1118,7 @@ fn opLDA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // LDX - Load x register
+
 ///|
 fn opLDX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[X] = self.read(addr)
@@ -1087,6 +1126,7 @@ fn opLDX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // LDY - Load y register
+
 ///|
 fn opLDY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[Y] = self.read(addr)
@@ -1094,18 +1134,19 @@ fn opLDY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // LSR - Logical shift right
+
 ///|
 fn opLSR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   match mode {
     Accumulator => {
       self.flags.setC((self.registers[A] & C) != 0)
-      self.registers[A] = self.registers[A]._ >> 1 |> u8 // underflow
+      self.registers[A] = (self.registers[A].inner() >> 1) |> u8 // underflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
       self.flags.setC((value & C) != 0)
-      value = value._ >> 1 |> u8 // underflow
+      value = (value.inner() >> 1) |> u8 // underflow
       self.write(addr, value)
       self.flags.setZN(value)
     }
@@ -1113,12 +1154,14 @@ fn opLSR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // NOP - No operation
+
 ///|
 fn opNOP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   //
 }
 
 // ORA - Logical inclusive or
+
 ///|
 fn opORA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[A] = self.registers[A] | self.read(addr)
@@ -1126,6 +1169,7 @@ fn opORA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // PHA - Push accumulator
+
 ///|
 fn opPHA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.push(self.registers[A])
@@ -1142,6 +1186,7 @@ fn opPHP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // PLA - Pull accumulator
+
 ///|
 fn opPLA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[A] = self.pop()
@@ -1161,19 +1206,20 @@ fn opPLP(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // ROL - Rotate left
+
 ///|
 fn opROL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let c = self.flags[C].to_int()
   match mode {
     Accumulator => {
       self.flags.setC((self.registers[A] & N) != 0)
-      self.registers[A] = (self.registers[A]._ << 1 |> u8) | c // overflow
+      self.registers[A] = ((self.registers[A].inner() << 1) |> u8) | c // overflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
       self.flags.setC((value & N) != 0)
-      value = (value._ << 1 |> u8) | c // overflow
+      value = ((value.inner() << 1) |> u8) | c // overflow
       self.write(addr, value)
       self.flags.setZN(value)
     }
@@ -1181,19 +1227,20 @@ fn opROL(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // ROR - Rotate right
+
 ///|
 fn opROR(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let c = self.flags[C].to_int()
   match mode {
     Accumulator => {
       self.flags.setC((self.registers[A] & C) != 0)
-      self.registers[A] = (self.registers[A]._ >> 1 |> u8) | (c << 7) // underflow
+      self.registers[A] = ((self.registers[A].inner() >> 1) |> u8) | (c << 7) // underflow
       self.flags.setZN(self.registers[A])
     }
     _ => {
       let mut value = self.read(addr)
       self.flags.setC((value & C) != 0)
-      value = (value._ >> 1 |> u8) | (c << 7) // underflow
+      value = ((value.inner() >> 1) |> u8) | (c << 7) // underflow
       self.write(addr, value)
       self.flags.setZN(value)
     }
@@ -1218,12 +1265,14 @@ fn opRTI(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // RTS - Return from subrouting
+
 ///|
 fn opRTS(self : CPU, addr : UInt16, mode : Mode) -> Unit {
-  self.pc = self.pop16()._ + 1 |> u16 // overflow
+  self.pc = (self.pop16().inner() + 1) |> u16 // overflow
 }
 
 // SBC - Subtract with carry
+
 ///|
 fn opSBC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let a = self.registers[A]
@@ -1250,12 +1299,14 @@ fn opSBC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // SEC - Set carry flag
+
 ///|
 fn opSEC(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.flags.set_carry()
 }
 
 // SED - Set decimal flag
+
 ///|
 fn opSED(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.flags.set_decimal()
@@ -1273,24 +1324,28 @@ fn opSEI(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // STA - Store accumulator
+
 ///|
 fn opSTA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.write(addr, self.registers[A])
 }
 
 // STX - Store x register
+
 ///|
 fn opSTX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.write(addr, self.registers[X])
 }
 
 // STY - Store y register
+
 ///|
 fn opSTY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.write(addr, self.registers[Y])
 }
 
 // TAX - Transfer accumulator to x
+
 ///|
 fn opTAX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[X] = self.registers[A]
@@ -1298,6 +1353,7 @@ fn opTAX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // TAY - Transfer accumulator to y
+
 ///|
 fn opTAY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[Y] = self.registers[A]
@@ -1305,6 +1361,7 @@ fn opTAY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // TSX - Transfer stack pointer to x
+
 ///|
 fn opTSX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[X] = self.registers[SP]
@@ -1312,6 +1369,7 @@ fn opTSX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 }
 
 // TXA - Transfer x to accumulator
+
 ///|
 fn opTXA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   self.registers[A] = self.registers[X]
@@ -1647,8 +1705,8 @@ fn opSHA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   let tmp = self.registers[A] &
     self.registers[X] &
     (match mode {
-      AbsoluteY => (addr >> 8) + 1 |> u8 // overflow
-      IndirectIndexed => (addr >> 8) + 1 |> u8 // overflow
+      AbsoluteY => ((addr >> 8) + 1) |> u8 // overflow
+      IndirectIndexed => ((addr >> 8) + 1) |> u8 // overflow
       _ => {
         println("unimplemented: SHA \{mode}")
         abort("unimplemented: SHA \{mode}")
@@ -1672,7 +1730,7 @@ fn opSHA(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 fn opSHX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   // println("SHX X#$" + self.registers[X].to_hex() + " $" + addr.to_hex())
 
-  let tmp = self.registers[X]._ & ((addr._ >> 8) + 1) |> u8 // overflow
+  let tmp = (self.registers[X].inner() & ((addr.inner() >> 8) + 1)) |> u8 // overflow
   self.write(addr, tmp)
 
   // println("unimplemented: SHX")
@@ -1694,7 +1752,7 @@ fn opSHX(self : CPU, addr : UInt16, mode : Mode) -> Unit {
 fn opSHY(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   // println("SHY X#$" + self.registers[Y].to_hex() + " $" + addr.to_hex())
 
-  let tmp = self.registers[Y]._ & ((addr._ >> 8) + 1) |> u8 // overflow
+  let tmp = (self.registers[Y].inner() & ((addr.inner() >> 8) + 1)) |> u8 // overflow
   self.write(addr, tmp)
 
   // println("unimplemented: SHY")
@@ -1740,7 +1798,8 @@ fn opSHS(self : CPU, addr : UInt16, mode : Mode) -> Unit {
   //   addr.to_hex(),
   // )
 
-  let tmp = (self.registers[A] & self.registers[X])._ & ((addr._ >> 8) + 1)
+  let tmp = ((self.registers[A] & self.registers[X]).inner() &
+    ((addr.inner() >> 8) + 1))
     |> u8 // overflow
   self.write(addr, tmp)
 
@@ -2286,7 +2345,7 @@ enum Instruction {
 
 ///|
 fn Instruction::to_int(self : Instruction) -> Int {
-  get_opcode(self)._
+  get_opcode(self).inner()
 }
 
 ///|
@@ -2492,7 +2551,7 @@ fn get_opcode(instruction : Instruction) -> UInt8 {
 
 ///|
 fn CPU::op_get(self : CPU, address : Int) -> Int {
-  self.read(address, dummy=true)._
+  self.read(address, dummy=true).inner()
 }
 
 ///|

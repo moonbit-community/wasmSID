@@ -103,7 +103,7 @@ pub fn C64::new(
   //
   realSID~ : Bool = false,
   //
-  debug~ : Bool = false
+  debug~ : Bool = false,
 ) -> C64 {
   let mem = mem.or(Memory::new())
 
@@ -184,9 +184,7 @@ pub fn C64::new(
   let _ = cpu.load(address, data, length~)
 
   //
-  try {
-    c64.reset!()
-  } catch {
+  c64.reset() catch {
     err => {
       println(err)
       panic()
@@ -215,8 +213,9 @@ pub fn set_bank(self : C64, port : IOPort) -> Unit {
 }
 
 //set hardware-parameters (Models, SIDs) for playback of loaded SID-tune
+
 ///|
-pub fn reset(self : C64) -> Unit! {
+pub fn reset(self : C64) -> Unit raise {
   println(">> C64::reset")
 
   //
@@ -227,8 +226,8 @@ pub fn reset(self : C64) -> Unit! {
   self.sampleClockRatio = (self.cpuFrequency.to_int?().unwrap() << 4) /
     self.sampleRate //shifting (multiplication) enhances SampleClockRatio precision
   //
-  self.vic.rasterCompare = ScanLines(self.videoStandard).to_int!() // HINT: should be inferred
-  self.vic.rasterRowCycles = ScanLineCycles(self.videoStandard).to_int!() // HINT: should be inferred
+  self.vic.rasterCompare = ScanLines(self.videoStandard).to_int() // HINT: should be inferred
+  self.vic.rasterRowCycles = ScanLineCycles(self.videoStandard).to_int() // HINT: should be inferred
   self.frameCycles = self.vic.rasterCompare * self.vic.rasterRowCycles ///C64->SampleRate / PAL_FRAMERATE; //1x speed tune with VIC Vertical-blank timing
   //
   self.prevRasterLine = -1 //so if $d012 is set once only don't disturb FrameCycleCnt
@@ -485,14 +484,15 @@ pub fn initCPU(self : C64, baseaddress? : Int) -> Unit {
 }
 
 //C64 Reset
+
 ///|
-pub fn initC64(self : C64) -> Unit! {
+pub fn initC64(self : C64) -> Unit raise {
   println(">> C64::initC64")
 
   //
   self.sid.each(fn(sid) { sid.reset(videoStandard=self.videoStandard) })
   self.cia.each(fn(cia) { cia.reset(videoStandard=self.videoStandard) })
-  self.vic.reset!(videoStandard=self.videoStandard)
+  self.vic.reset(videoStandard=self.videoStandard)
 
   // self.mem.reset()
 
@@ -552,9 +552,7 @@ pub fn emulate(self : C64) -> Output {
   // println(">> C64::emulate")
   //
 
-  let cpuClock = try {
-    self.cpuFrequency.to_int!()
-  } catch {
+  let cpuClock = self.cpuFrequency.to_int() catch {
     err => {
       println(err)
       panic()
@@ -740,7 +738,7 @@ pub fn C64::load(
   offset~ : Int = 0,
   length~ : Int = data.length(),
   //
-  has_load_address~ : Bool = false
+  has_load_address~ : Bool = false,
 ) -> Int {
   self.cpu.load(offset, data, length~, has_load_address~)
 }
@@ -854,9 +852,7 @@ fn interrupts(self : C64) -> Bool {
 ///|
 pub fn read(self : C64, address : Int, dummy~ : Bool = false) -> Int {
   if self.debug && not(dummy) {
-    let register = try {
-      " | \{C64register::from_int!(address)}"
-    } catch {
+    let register = " | \{C64register::from_int!(address)}" catch {
       _ =>
         // println(err)
         ""
@@ -930,7 +926,7 @@ fn read_direct(self : C64, address : Int) -> Int {
   // println("C64::read_direct $" + UInt16(addr).to_hex())
   //
 
-  self.mem.read(address)._
+  self.mem.read(address).inner()
 }
 
 ///|
@@ -951,12 +947,10 @@ pub fn write(
   address : Int,
   value : Int,
   //
-  dummy~ : Bool = false
+  dummy~ : Bool = false,
 ) -> Unit {
   if self.debug && not(dummy) {
-    let register = try {
-      " | \{C64register::from_int!(address)}"
-    } catch {
+    let register = " | \{C64register::from_int!(address)}" catch {
       _ =>
         // println(err)
         ""
@@ -1029,7 +1023,7 @@ pub fn write(
 
 ///|
 fn write_direct(self : C64, address : UInt16, value : UInt8) -> Unit {
-  self.mem.write(address._, value._)
+  self.mem.write(address.inner(), value.inner())
 }
 
 ///|
@@ -1071,8 +1065,8 @@ pub fn write_word(self : C64, register : C64register, value : UInt16) -> Unit {
     | TXTTAB
     | USRCMD
     | WARM => {
-      self.write(address, value._ >> 8)
-      self.write(address + 1, value._ & 0xFF)
+      self.write(address, value.inner() >> 8)
+      self.write(address + 1, value.inner() & 0xFF)
     }
     _ => {
       println("unknown C64 register \{register}")
@@ -1086,13 +1080,13 @@ pub fn write_array(
   self : C64,
   //
   register : C64register,
-  values : Array[UInt8]
+  values : Array[UInt8],
 ) -> Unit {
   let address = c64(register)
   match register {
     CARTROM | READY | GETIN =>
       values.eachi(fn(i, value) { self.write_direct(address + i, value) })
-    _ => ...
+    ...
   }
 }
 
@@ -1103,5 +1097,5 @@ pub fn op_set(self : C64, register : C64register, value : UInt8) -> Unit {
   let address = c64(register)
 
   //
-  self.write(address, value._)
+  self.write(address, value.inner())
 }

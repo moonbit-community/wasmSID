@@ -1,5 +1,5 @@
 ///|
-pub typealias Flag = Int
+pub typealias Int as Flag
 
 ///|
 pub const C = 0b00000001 // 0x01 Carry Flag
@@ -130,6 +130,7 @@ fn Flags::is_set(self : Flags, flag : Flag) -> Bool {
 }
 
 // Get status register value.
+
 ///|
 pub fn Flags::get(self : Flags) -> UInt8 {
   self.getC() |
@@ -143,6 +144,7 @@ pub fn Flags::get(self : Flags) -> UInt8 {
 }
 
 // Set status register value.
+
 ///|
 pub fn Flags::set(self : Flags, flags : UInt8) -> Unit {
   self[C] = flags.bit(0)
@@ -325,6 +327,7 @@ fn setZ(self : Flags, value : Bool) -> Unit {
 }
 
 // Set N and Z flag values.
+
 ///|
 fn setZN(self : Flags, value : UInt8) -> Unit {
   self.setZ(value == 0)

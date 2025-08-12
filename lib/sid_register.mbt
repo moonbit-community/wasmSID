@@ -46,10 +46,8 @@ struct FilterResonanceControl {
   /// through pin 5 of the Audio/Video Port.
   ///
   voice : FixedArray[Bool]
-
   /// Bit 3:  Filter the output from the external input?  1=yes
   external : Bool
-
   /// Bits 4-7 control the resonance of the filter.  By placing a number
   /// from 0 to 15 in these four bits, you may peak the volume of those
   /// frequencies nearest the cutoff.  This creates an even sharper
@@ -83,7 +81,7 @@ fn FilterResonanceControl::from_u8(value : UInt8) -> FilterResonanceControl {
     /// Bit 3:  Filter the output from the external input?  1=yes
     external: (value & (1 << 3)) != 0,
     /// Bits 4-7:  Select filter resonance 0-15
-    resonance: (value & 0xF0)._ >> 4,
+    resonance: (value & 0xF0).inner() >> 4,
   }
 }
 
@@ -108,7 +106,6 @@ struct Envelope {
   mut attack : Int
   /// Bits 0-3:  Select decay cycle duration (0-15)
   mut decay : Int
-
   /// 54278         $D406          SUREL1
   /// Bits 4-7:  Select sustain volume level (0-15)
   mut sustain : Int
@@ -122,16 +119,13 @@ struct Voice {
   /// 54273         $D401          FREHI1
   /// Voice Frequency Control
   mut frequency : UInt16
-
   /// 54274         $D402          PWLO1
   /// 54275         $D403          PWHI1
   /// Voice Pulse Waveform Width
   mut pulseWidth : UInt16
-
   /// 54276         $D404          VCREG1
   /// Voice Control Register
   mut control : VoiceControl
-
   /// 54277         $D405          ATDCY1
   /// 54278         $D406          SUREL1
   /// Voice Attack/Decay/Sustain/Release Control Register
@@ -162,7 +156,6 @@ struct SIDRegister {
   /// $05 - $06
   /// Voice Envelope (ADSR) Control
   voice : FixedArray[Voice]
-
   /// $15 - $18
   /// Filter Controls
   ///
@@ -184,7 +177,6 @@ struct SIDRegister {
   filterSelect : FilterSelect
   /// Bit 7:  Cut-Off Voice 3 Output: 1 = Off, 0 = On
   mut disconnectVoice : Bool
-
   /// $19 - $1A
   /// Game Paddle Inputs
   ///
@@ -192,7 +184,6 @@ struct SIDRegister {
   /// $1A
   /// Read Game Paddle Position
   input : FixedArray[UInt8]
-
   /// $1B
   /// Read Oscillator 3/Random Number Generator
   mut random : UInt8
@@ -240,7 +231,6 @@ enum SIDregister {
   ATDCY1
   /// Voice 1 Sustain/Release Control Register
   SUREL1
-
   /// Voice 2 Frequency Control (low byte)
   FRELO2
   /// Voice 2 Frequency Control (high byte)
@@ -255,7 +245,6 @@ enum SIDregister {
   ATDCY2
   /// Voice 2 Sustain/Release Control Register
   SUREL2
-
   /// Voice 3 Frequency Control (low byte)
   FRELO3
   /// Voice 3 Frequency Control (high byte)
@@ -270,7 +259,6 @@ enum SIDregister {
   ATDCY3
   /// Voice 3 Sustain/Release Control Register
   SUREL3
-
   /// Filter Cutoff Frequency: Low-Nybble
   CUTLO
   /// Filter Cutoff Frequency: High-Byte
@@ -279,14 +267,12 @@ enum SIDregister {
   RESON
   /// Volume and Filter Select Register
   SIGVOL
-
   /// Read Game Paddle 1 (or 3) Position
   POTX
   /// Read Game Paddle 2 (or 4) Position
   POTY
   /// Read Oscillator 3/Random Number Generator
   RANDOM
-
   /// Envelope Generator 3 Output
   ENV3
 
@@ -344,7 +330,7 @@ fn sid(register : SIDregister) -> Int {
 }
 
 ///|
-fn SIDregister::from_int(value : Int) -> SIDregister! {
+fn SIDregister::from_int(value : Int) -> SIDregister raise {
   match value {
     /// Voice 1
     0x00 => FRELO1
@@ -422,7 +408,6 @@ struct VoiceControl {
   /// the pulse width, if necessary, and the volume control set to a nonzero
   /// value.
   gateBit : Bool
-
   /// Bit 1.  This bit is used to synchronize the fundamental frequency of
   /// Oscillator 1 with the fundamental frequency of Oscillator 3, allowing
   /// you to create a wide range of complex harmonic structures from voice
@@ -430,31 +415,25 @@ struct VoiceControl {
   /// must be set to some frequency other than zero, but no other voice 3
   /// parameters will affect the output from voice 1.
   syncBit : Bool
-
   /// Bit 2.  When Bit 2 is set to 1, the triangle waveform output of voice
   /// 1 is replaced with a ring modulated combination of Oscillators 1 and
   /// 3.  This ring modulation produces nonharmonic overtone structures that
   /// are useful for creating bell or gong effects.
   ringModulation : Bool
-
   /// Bit 3.  Bit 3 is the test bit.  When set to 1, it disables the output
   /// of the oscillator.  This can be useful in generating very complex
   /// waveforms (even speech synthesis) under software control.
   testBit : Bool
-
   /// Bit 4.  When set to 1, Bit 4 selects the triangle waveform output of
   /// Oscillator 1.  Bit 0 must also be set for the note to be sounded.
   triangleWaveform : Bool
-
   /// Bit 5.  This bit selects the sawtooth waveform when set to 1.  Bit 0
   /// must also be set for the sound to begin.
   sawtoothWaveform : Bool
-
   /// Bit 6.  Bit 6 chooses the pulse waveform when set to 1.  The harmonic
   /// content of sound produced using this waveform may be varied using the
   /// Pulse Width Registers.  Bit 0 must be set to begin the sound.
   pulseWaveform : Bool
-
   /// Bit 7.  When Bit 7 is set to 1, the noise output waveform for
   /// Oscillator 1 is set.  This creates a random sound output whose
   /// waveform varies with a frequency proportionate to that of Oscillator
