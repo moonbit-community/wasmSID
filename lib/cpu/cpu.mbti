@@ -1,3 +1,4 @@
+// Generated using `moon info`, DON'T EDIT IT
 package "trancee/wasmSID/lib/cpu"
 
 // Values
@@ -17,99 +18,47 @@ const V : Int = 0b01000000
 
 const Z : Int = 0b00000010
 
-fn bit(UInt8, UInt8) -> Bool
-
-fn clear_flags(CPU) -> Unit
-
-fn clear_registers(CPU) -> Unit
-
-fn debug(CPU, Bool) -> Bool
-
-fn get_registers(CPU) -> Registers
-
-fn interrupts(CPU) -> Bool
-
-fn irq(CPU, pc? : Int) -> Unit
-
-fn load(CPU, Int, FixedArray[Int], length~ : Int = .., has_load_address~ : Bool = ..) -> Int
-
-fn nmi(CPU, pc? : Int) -> Unit
-
-fn push(CPU, UInt8, dummy~ : Bool = ..) -> Unit
-
-fn push16(CPU, UInt16) -> Unit
-
-fn read(CPU, UInt16, dummy~ : Bool = ..) -> UInt8
-
-fn register(CPU, Register, Int) -> Unit
-
-fn setIRQ(CPU, UInt16) -> Unit
-
-fn setNMI(CPU, UInt16) -> Unit
-
-fn set_interrupt(Flags) -> Unit
-
-fn set_irq(CPU, state~ : Bool = ..) -> Unit
-
-fn set_nmi(CPU, state~ : Bool = ..) -> Unit
-
-fn set_read(CPU, (Int, Bool) -> Int) -> Unit
-
-fn set_write(CPU, (Int, Int, Bool) -> Unit) -> Unit
-
-fn step(CPU) -> Int
-
-fn to_hex(UInt8) -> String
-
-fn write(CPU, UInt16, UInt8, dummy~ : Bool = ..) -> Unit
-
-fn write16(CPU, UInt16, UInt16, dummy~ : Bool = ..) -> Unit
+// Errors
 
 // Types and methods
-type AddressHook
-
 type CPU
-impl CPU {
-  a(Self) -> UInt8
-  clear_flags(Self) -> Unit
-  clear_interrupt(Self) -> Unit
-  clear_registers(Self) -> Unit
-  debug(Self, Bool) -> Bool
-  get_flags(Self) -> Flags
-  get_registers(Self) -> Registers
-  has_interrupt(Self) -> Bool
-  hook(Self, Int, (Int) -> Unit) -> Unit
-  interrupts(Self) -> Bool
-  irq(Self, pc? : Int) -> Unit
-  load(Self, Int, FixedArray[Int], length~ : Int = .., has_load_address~ : Bool = ..) -> Int
-  new(pc~ : Int = .., data~ : FixedArray[Int] = .., addr~ : Int = .., length~ : Int = .., decimal_mode~ : Bool = .., debug~ : Bool = ..) -> Self
-  nmi(Self, pc? : Int) -> Unit
-  pc(Self) -> Int
-  push(Self, UInt8, dummy~ : Bool = ..) -> Unit
-  push16(Self, UInt16) -> Unit
-  read(Self, UInt16, dummy~ : Bool = ..) -> UInt8
-  register(Self, Register, Int) -> Unit
-  reset(Self, baseaddress? : Int) -> Unit
-  setIRQ(Self, UInt16) -> Unit
-  setNMI(Self, UInt16) -> Unit
-  setRESET(Self, UInt16) -> Unit
-  set_flags(Self, UInt8) -> Unit
-  set_interrupt(Self) -> Unit
-  set_irq(Self, state~ : Bool = ..) -> Unit
-  set_nmi(Self, state~ : Bool = ..) -> Unit
-  set_read(Self, (Int, Bool) -> Int) -> Unit
-  set_write(Self, (Int, Int, Bool) -> Unit) -> Unit
-  step(Self) -> Int
-  write(Self, UInt16, UInt8, dummy~ : Bool = ..) -> Unit
-  write16(Self, UInt16, UInt16, dummy~ : Bool = ..) -> Unit
-}
+fn CPU::a(Self) -> UInt8
+fn CPU::clear_flags(Self) -> Unit
+fn CPU::clear_interrupt(Self) -> Unit
+fn CPU::clear_registers(Self) -> Unit
+fn CPU::debug(Self, Bool) -> Bool
+fn CPU::get_flags(Self) -> Flags
+fn CPU::get_registers(Self) -> Registers
+fn CPU::has_interrupt(Self) -> Bool
+fn CPU::hook(Self, Int, (Int) -> Unit) -> Unit
+fn CPU::interrupts(Self) -> Bool
+fn CPU::irq(Self, pc? : Int) -> Unit
+fn CPU::load(Self, Int, FixedArray[Int], length? : Int, has_load_address? : Bool) -> Int
+fn CPU::new(pc? : Int, decimal_mode? : Bool, debug? : Bool) -> Self
+fn CPU::nmi(Self, pc? : Int) -> Unit
+fn CPU::pc(Self) -> Int
+fn CPU::push(Self, UInt8, dummy? : Bool) -> Unit
+fn CPU::push16(Self, UInt16) -> Unit
+fn CPU::read(Self, UInt16, dummy? : Bool) -> UInt8
+fn CPU::register(Self, Register, Int) -> Unit
+fn CPU::reset(Self, baseaddress? : Int) -> Unit
+fn CPU::setIRQ(Self, UInt16) -> Unit
+fn CPU::setNMI(Self, UInt16) -> Unit
+fn CPU::setRESET(Self, UInt16) -> Unit
+fn CPU::set_flags(Self, UInt8) -> Unit
+fn CPU::set_interrupt(Self) -> Unit
+fn CPU::set_irq(Self, state? : Bool) -> Unit
+fn CPU::set_nmi(Self, state? : Bool) -> Unit
+fn CPU::set_read(Self, (Int, Bool) -> Int) -> Unit
+fn CPU::set_write(Self, (Int, Int, Bool) -> Unit) -> Unit
+fn CPU::step(Self) -> Int
+fn CPU::write(Self, UInt16, UInt8, dummy? : Bool) -> Unit
+fn CPU::write16(Self, UInt16, UInt16, dummy? : Bool) -> Unit
 
 type Flags
-impl Flags {
-  get(Self) -> UInt8
-  set(Self, UInt8) -> Unit
-  set_interrupt(Self) -> Unit
-}
+fn Flags::get(Self) -> UInt8
+fn Flags::set(Self, UInt8) -> Unit
+fn Flags::set_interrupt(Self) -> Unit
 impl Eq for Flags
 impl Show for Flags
 
@@ -128,30 +77,25 @@ pub(all) enum Register {
 
 type Registers
 
-pub(all) type UInt16 Int
-impl UInt16 {
-  to_hex(Self) -> String
-}
+pub(all) struct UInt16(Int)
+fn UInt16::inner(Self) -> Int
+fn UInt16::to_hex(Self) -> String
 impl Compare for UInt16
 impl Default for UInt16
 impl Eq for UInt16
 impl Show for UInt16
 
-pub(all) type UInt8 Int
-impl UInt8 {
-  bit(Self, Self) -> Bool
-  to_hex(Self) -> String
-}
+pub(all) struct UInt8(Int)
+fn UInt8::bit(Self, Self) -> Bool
+fn UInt8::inner(Self) -> Int
+fn UInt8::to_hex(Self) -> String
 impl Compare for UInt8
 impl Default for UInt8
 impl Eq for UInt8
 impl Show for UInt8
 
-type Vector
-impl Eq for Vector
-
 // Type aliases
-pub typealias Flag = Int
+pub typealias Int as Flag
 
 // Traits
 trait U16

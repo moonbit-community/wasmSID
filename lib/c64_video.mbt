@@ -1,4 +1,5 @@
 //0:NTSC, 1:PAL (based on the SID-header field)
+
 ///|
 enum VideoStandard {
   Unknown
@@ -8,7 +9,7 @@ enum VideoStandard {
 } derive(Show, Eq)
 
 ///|
-fn VideoStandard::from_int(value : Int) -> VideoStandard! {
+fn VideoStandard::from_int(value : Int) -> VideoStandard raise {
   match value {
     0b00 => Unknown
     0b01 => PAL
@@ -19,7 +20,7 @@ fn VideoStandard::from_int(value : Int) -> VideoStandard! {
 }
 
 ///|
-fn VideoStandard::to_int(self : VideoStandard) -> Int! {
+fn VideoStandard::to_int(self : VideoStandard) -> Int raise {
   match self {
     NTSC => 0
     PAL => 1
@@ -28,16 +29,19 @@ fn VideoStandard::to_int(self : VideoStandard) -> Int! {
 }
 
 ///|
-fn VideoStandard::op_get(self : VideoStandard, value : VideoStandard) -> Int! {
-  value.to_int!()
+fn VideoStandard::op_get(
+  self : VideoStandard,
+  value : VideoStandard,
+) -> Int raise {
+  value.to_int()
 }
 
 ///|
-type CPUClock VideoStandard derive(Show, Eq)
+struct CPUClock(VideoStandard) derive(Show, Eq)
 
 ///|
-fn CPUClock::to_int(self : CPUClock) -> Int! {
-  match self._ {
+fn CPUClock::to_int(self : CPUClock) -> Int raise {
+  match self.inner() {
     Unknown => 0
     NTSC => 1022727
     PAL => 985248
@@ -46,58 +50,58 @@ fn CPUClock::to_int(self : CPUClock) -> Int! {
 }
 
 ///|
-fn CPUClock::op_get(self : CPUClock, value : VideoStandard) -> Int! {
-  value.to_int!()
+fn CPUClock::op_get(self : CPUClock, value : VideoStandard) -> Int raise {
+  value.to_int()
 }
 
 ///|
 test "CPUClock::None" {
   let value = CPUClock(Unknown)
-  assert_eq!(value, Unknown)
-  inspect!(value.to_int!(), content="0")
+  assert_eq(value, Unknown)
+  inspect(value.to_int(), content="0")
 }
 
 ///|
 test "CPUClock::NTSC" {
   let value = CPUClock(NTSC)
-  assert_eq!(value, NTSC)
-  inspect!(value.to_int!(), content="1022727")
+  assert_eq(value, NTSC)
+  inspect(value.to_int(), content="1022727")
 }
 
 ///|
 test "CPUClock::PAL" {
   let value = CPUClock(PAL)
-  assert_eq!(value, PAL)
-  inspect!(value.to_int!(), content="985248")
+  assert_eq(value, PAL)
+  inspect(value.to_int(), content="985248")
 }
 
 ///|
 test "error CPUClock::Both" {
   let value = CPUClock(Both)
-  assert_eq!(value, Both)
-  inspect!(value.to_int?(), content="Err(unknown CPU clock)")
+  assert_eq(value, Both)
+  inspect(value.to_int?(), content="Err(unknown CPU clock)")
 }
 
 ///|
 test "CPUClock::NTSC shift left" {
   let value = CPUClock(NTSC)
-  assert_eq!(value, NTSC)
-  inspect!(value.to_int?().unwrap() << 4, content="16363632")
+  assert_eq(value, NTSC)
+  inspect(value.to_int?().unwrap() << 4, content="16363632")
 }
 
 ///|
 test "CPUClock::PAL shift left" {
   let value = CPUClock(PAL)
-  assert_eq!(value, PAL)
-  inspect!(value.to_int?().unwrap() << 4, content="15763968")
+  assert_eq(value, PAL)
+  inspect(value.to_int?().unwrap() << 4, content="15763968")
 }
 
 ///|
-type ScanLines VideoStandard derive(Show, Eq)
+struct ScanLines(VideoStandard) derive(Show, Eq)
 
 ///|
-fn ScanLines::to_int(self : ScanLines) -> Int! {
-  match self._ {
+fn ScanLines::to_int(self : ScanLines) -> Int raise {
+  match self.inner() {
     NTSC => 262
     PAL => 312
     _ => raise UnknownScanLines
@@ -105,44 +109,44 @@ fn ScanLines::to_int(self : ScanLines) -> Int! {
 }
 
 ///|
-fn ScanLines::op_get(self : ScanLines, value : VideoStandard) -> Int! {
-  value.to_int!()
+fn ScanLines::op_get(self : ScanLines, value : VideoStandard) -> Int raise {
+  value.to_int()
 }
 
 ///|
 test "error ScanLines::None" {
   let value = ScanLines(Unknown)
-  assert_eq!(value, Unknown)
-  inspect!(value.to_int?(), content="Err(unknown scan lines)")
+  assert_eq(value, Unknown)
+  inspect(value.to_int?(), content="Err(unknown scan lines)")
 }
 
 ///|
 test "ScanLines::NTSC" {
   let value = ScanLines(NTSC)
-  assert_eq!(value, NTSC)
-  inspect!(value.to_int!(), content="262")
+  assert_eq(value, NTSC)
+  inspect(value.to_int(), content="262")
 }
 
 ///|
 test "ScanLines::PAL" {
   let value = ScanLines(PAL)
-  assert_eq!(value, PAL)
-  inspect!(value.to_int!(), content="312")
+  assert_eq(value, PAL)
+  inspect(value.to_int(), content="312")
 }
 
 ///|
 test "error ScanLines::Both" {
   let value = ScanLines(Both)
-  assert_eq!(value, Both)
-  inspect!(value.to_int?(), content="Err(unknown scan lines)")
+  assert_eq(value, Both)
+  inspect(value.to_int?(), content="Err(unknown scan lines)")
 }
 
 ///|
-type ScanLineCycles VideoStandard derive(Show, Eq)
+struct ScanLineCycles(VideoStandard) derive(Show, Eq)
 
 ///|
-fn ScanLineCycles::to_int(self : ScanLineCycles) -> Int! {
-  match self._ {
+fn ScanLineCycles::to_int(self : ScanLineCycles) -> Int raise {
+  match self.inner() {
     NTSC => 65
     PAL => 63
     _ => raise UnknownScanLineCycles
@@ -150,44 +154,47 @@ fn ScanLineCycles::to_int(self : ScanLineCycles) -> Int! {
 }
 
 ///|
-fn ScanLineCycles::op_get(self : ScanLineCycles, value : VideoStandard) -> Int! {
-  value.to_int!()
+fn ScanLineCycles::op_get(
+  self : ScanLineCycles,
+  value : VideoStandard,
+) -> Int raise {
+  value.to_int()
 }
 
 ///|
 test "error ScanLineCycles::None" {
   let value = ScanLineCycles(Unknown)
-  assert_eq!(value, Unknown)
-  inspect!(value.to_int?(), content="Err(unknown scan line cycles)")
+  assert_eq(value, Unknown)
+  inspect(value.to_int?(), content="Err(unknown scan line cycles)")
 }
 
 ///|
 test "ScanLineCycles::NTSC" {
   let value = ScanLineCycles(NTSC)
-  assert_eq!(value, NTSC)
-  inspect!(value.to_int!(), content="65")
+  assert_eq(value, NTSC)
+  inspect(value.to_int(), content="65")
 }
 
 ///|
 test "ScanLineCycles::PAL" {
   let value = ScanLineCycles(PAL)
-  assert_eq!(value, PAL)
-  inspect!(value.to_int!(), content="63")
+  assert_eq(value, PAL)
+  inspect(value.to_int(), content="63")
 }
 
 ///|
 test "error ScanLineCycles::Both" {
   let value = ScanLineCycles(Both)
-  assert_eq!(value, Both)
-  inspect!(value.to_int?(), content="Err(unknown scan line cycles)")
+  assert_eq(value, Both)
+  inspect(value.to_int?(), content="Err(unknown scan line cycles)")
 }
 
 ///|
-type FrameRate VideoStandard derive(Show, Eq)
+struct FrameRate(VideoStandard) derive(Show, Eq)
 
 ///|
-fn FrameRate::to_int(self : FrameRate) -> Int! {
-  match self._ {
+fn FrameRate::to_int(self : FrameRate) -> Int raise {
+  match self.inner() {
     NTSC => 60
     PAL => 50
     _ => raise UnknownFrameRate
@@ -195,34 +202,34 @@ fn FrameRate::to_int(self : FrameRate) -> Int! {
 }
 
 ///|
-fn FrameRate::op_get(self : FrameRate, value : VideoStandard) -> Int! {
-  value.to_int!()
+fn FrameRate::op_get(self : FrameRate, value : VideoStandard) -> Int raise {
+  value.to_int()
 }
 
 ///|
 test "error FrameRate::None" {
   let value = FrameRate(Unknown)
-  assert_eq!(value, Unknown)
-  inspect!(value.to_int?(), content="Err(unknown frame rate)")
+  assert_eq(value, Unknown)
+  inspect(value.to_int?(), content="Err(unknown frame rate)")
 }
 
 ///|
 test "FrameRate::NTSC" {
   let value = FrameRate(NTSC)
-  assert_eq!(value, NTSC)
-  inspect!(value.to_int!(), content="60")
+  assert_eq(value, NTSC)
+  inspect(value.to_int(), content="60")
 }
 
 ///|
 test "FrameRate::PAL" {
   let value = FrameRate(PAL)
-  assert_eq!(value, PAL)
-  inspect!(value.to_int!(), content="50")
+  assert_eq(value, PAL)
+  inspect(value.to_int(), content="50")
 }
 
 ///|
 test "error FrameRate::Both" {
   let value = FrameRate(Both)
-  assert_eq!(value, Both)
-  inspect!(value.to_int?(), content="Err(unknown frame rate)")
+  assert_eq(value, Both)
+  inspect(value.to_int?(), content="Err(unknown frame rate)")
 }

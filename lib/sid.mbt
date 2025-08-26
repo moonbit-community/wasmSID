@@ -145,7 +145,7 @@ pub fn SID::new(
   model~ : Model = Unknown,
   channel~ : Channel = Unknown,
   videoStandard~ : VideoStandard = Unknown,
-  debug~ : Bool = false
+  debug~ : Bool = false,
 ) -> SID {
   println("SID::new")
   //
@@ -191,20 +191,16 @@ pub fn SID::new(
         baseaddress + sid_mem_size,
         // mem,
         fn(address : UInt16, dummy : Bool) -> UInt8 {
-          let register = try {
-            SIDregister::from_int!(address._ - baseaddress)
-          } catch {
+          let register = SIDregister::from_int(address.inner() - baseaddress) catch {
             err => {
               println(err)
               panic()
             }
           }
-          sid[register]._
+          sid[register].inner()
         },
         fn(address : UInt16, value : UInt8, dummy : Bool) {
-          let register = try {
-            SIDregister::from_int!(address._ - baseaddress)
-          } catch {
+          let register = SIDregister::from_int(address.inner() - baseaddress) catch {
             err => {
               println(err)
               panic()
@@ -213,7 +209,7 @@ pub fn SID::new(
           sid[register] = value
         },
       )
-    _ => ...
+    ...
   }
 
   //
@@ -309,7 +305,7 @@ fn emulateWaves(
   self : SID,
   sampleClockRatio : Int,
   attenuation : Int,
-  realSID : Bool
+  realSID : Bool,
 ) -> Int {
   // println(">> SID::emulateWaves")
   //
@@ -334,12 +330,12 @@ fn emulateWaves(
         oscval = oscval & 0x7FFF
       }
       let pitch = voice.frequency
-      let filt = 0x7777 + 0x8888 / pitch._
+      let filt = 0x7777 + 0x8888 / pitch.inner()
       wave.prevWavData = (
           wfArray[oscval >> 4] * filt + wave.prevWavData * (0xFFFF - filt)
         ) >>
         16
-      wave.prevWavData._ << 8
+      wave.prevWavData.inner() << 8
     }
 
     //
@@ -360,7 +356,7 @@ fn emulateWaves(
     let mut phaseAccuPtr = wave.phaseAccu // FIXME: better direct access instead of Ptr?
 
     //
-    let phaseAccuStep = voice.frequency._ * sampleClockRatio
+    let phaseAccuStep = voice.frequency.inner() * sampleClockRatio
     if testBit || (voiceControl.syncBit && wave.syncSourceMSBrise) {
       phaseAccuPtr = 0
     } else { //stepping phase-accumulator (oscillator)
@@ -397,7 +393,7 @@ fn emulateWaves(
         ((tmp & 0x01) << 8)
       }
     } else if voiceControl.pulseWaveform { //simple pulse
-      pw = voice.pulseWidth._ //PW=0000..FFF0 from SID-register
+      pw = voice.pulseWidth.inner() //PW=0000..FFF0 from SID-register
       utmp = phaseAccuStep >> 13
       if 0 < pw && pw < utmp {
         pw = utmp //Too thin pulsewidth? Correct...
@@ -489,7 +485,7 @@ fn emulateWaves(
     envelope = if self.model == MOS8580 {
       adsr.envelopeCounter
     } else {
-      adsrDAC_6581[adsr.envelopeCounter]._
+      adsrDAC_6581[adsr.envelopeCounter].inner()
     }
     if filterSwitchReso.voice[channel] {
       self.filterInputSample += ((wavGenOut - 0x8000) * envelope) >> 8 // FIXME: (int) clamping?
@@ -537,8 +533,8 @@ fn emulateSIDoutputStage(self : SID, attenuation : Int, realSID : Bool) -> Int {
 
   match self.model {
     MOS8580 => {
-      cutoff = cutoffMul8580_44100Hz[cutoff._]
-      resonance = resonances8580[resonance]._
+      cutoff = cutoffMul8580_44100Hz[cutoff.inner()]
+      resonance = resonances8580[resonance].inner()
     }
     MOS6581 => {
       //MOSFET-VCR control-voltage calculation
@@ -548,8 +544,8 @@ fn emulateSIDoutputStage(self : SID, attenuation : Int, realSID : Bool) -> Int {
       } else if cutoff < 0 {
         cutoff = 0
       }
-      cutoff = cutoffMul6581_44100Hz[cutoff._] //(resistance-modulation aka 6581 filter distortion) emulation
-      resonance = resonances6581[resonance]._
+      cutoff = cutoffMul6581_44100Hz[cutoff.inner()] //(resistance-modulation aka 6581 filter distortion) emulation
+      resonance = resonances6581[resonance].inner()
     }
     _ => {
       println("unknown SID model")
@@ -563,12 +559,12 @@ fn emulateSIDoutputStage(self : SID, attenuation : Int, realSID : Bool) -> Int {
   if filterSelect.highPass {
     filterOutput -= tmp
   }
-  tmp = self.prevBandPass - ((tmp * cutoff._) >> 12)
+  tmp = self.prevBandPass - ((tmp * cutoff.inner()) >> 12)
   self.prevBandPass = tmp
   if filterSelect.bandPass {
     filterOutput -= tmp
   }
-  tmp = self.prevLowPass + ((tmp * cutoff._) >> 12)
+  tmp = self.prevLowPass + ((tmp * cutoff.inner()) >> 12)
   self.prevLowPass = tmp
   if filterSelect.lowPass {
     filterOutput += tmp
@@ -586,7 +582,7 @@ fn emulateSIDoutputStage(self : SID, attenuation : Int, realSID : Bool) -> Int {
     self.prevVolume += (tmp - self.prevVolume) >> 10 //arithmetic shift amount determines digi lowpass-frequency
     mainVolume = self.prevVolume >> 12
   } else { //lowpass is main volume
-    mainVolume = self.register.volume._
+    mainVolume = self.register.volume.inner()
   }
 
   //
@@ -620,7 +616,7 @@ fn emulateHQWaves(self : SID, cycles : Int) -> SIDwavOutput {
       if self.model == MOS6581 && wfArray != PulseTriangle {
         oscval = oscval & 0x7FFF
       }
-      return wfArray[oscval >> 4]._ << 8
+      return wfArray[oscval >> 4].inner() << 8
     }
 
     let mut utmp = 0
@@ -636,7 +632,7 @@ fn emulateHQWaves(self : SID, cycles : Int) -> SIDwavOutput {
     let testBit = voiceControl.testBit
     let mut phaseAccuPtr = wave.phaseAccu // FIXME: better direct access instead of Ptr?
     //
-    let phaseAccuStep = voice.frequency._ * cycles
+    let phaseAccuStep = voice.frequency.inner() * cycles
     if testBit || (voiceControl.syncBit && wave.syncSourceMSBrise) {
       phaseAccuPtr = 0
     } else { //stepping phase-accumulator (oscillator)
@@ -673,7 +669,7 @@ fn emulateHQWaves(self : SID, cycles : Int) -> SIDwavOutput {
         ((tmp & 0x01) << 8)
       }
     } else if voiceControl.pulseWaveform { //simple pulse or pulse+combined
-      pw = voice.pulseWidth._ //PW=0000..FFF0 from SID-register
+      pw = voice.pulseWidth.inner() //PW=0000..FFF0 from SID-register
       utmp = phaseAccuStep >> 8
       wavGenOut = if utmp >= pw || testBit { 0xFFFF } else { 0 }
       //
@@ -723,7 +719,7 @@ fn emulateHQWaves(self : SID, cycles : Int) -> SIDwavOutput {
       envelope = if self.model == MOS8580 {
         adsr.envelopeCounter
       } else {
-        adsrDAC_6581[adsr.envelopeCounter]._
+        adsrDAC_6581[adsr.envelopeCounter].inner()
       }
       if filterSwitchReso.voice[channel] {
         wavOutput.filterInput += ((wavGenOut - 0x8000) * envelope) >> 8 // FIXME: (int) clamping?
@@ -803,7 +799,7 @@ fn SID::op_get(self : SID, register : SIDregister) -> UInt8 {
       /// Bits 0-3:  Select release cycle duration (0-15)
       SUREL1 | SUREL2 | SUREL3 =>
         (voice.envelope.sustain << 4) | voice.envelope.release
-      _ => ...
+      ...
     }
   }
 
@@ -842,7 +838,7 @@ fn SID::op_get(self : SID, register : SIDregister) -> UInt8 {
       (self.register.filterSelect.bandPass.to_int() << 5) |
       (self.register.filterSelect.highPass.to_int() << 6) |
       (self.register.disconnectVoice.to_int() << 7)
-    _ => ...
+    ...
   }
 }
 
@@ -900,8 +896,8 @@ fn SID::op_set(self : SID, register : SIDregister, value : UInt8) -> Unit {
       // /// Bits 4-7:  Select attack cycle duration (0-15)
       // /// Bits 0-3:  Select decay cycle duration (0-15)
       ATDCY1 | ATDCY2 | ATDCY3 => {
-        voice.envelope.attack = (value._ & 0xF0) >> 4
-        voice.envelope.decay = value._ & 0x0F
+        voice.envelope.attack = (value.inner() & 0xF0) >> 4
+        voice.envelope.decay = value.inner() & 0x0F
       }
 
       // /// Voice 1 Sustain/Release Control Register
@@ -909,10 +905,10 @@ fn SID::op_set(self : SID, register : SIDregister, value : UInt8) -> Unit {
       // /// Bits 4-7:  Select sustain volume level (0-15)
       // /// Bits 0-3:  Select release cycle duration (0-15)
       SUREL1 | SUREL2 | SUREL3 => {
-        voice.envelope.sustain = (value._ & 0xF0) >> 4
-        voice.envelope.release = value._ & 0x0F
+        voice.envelope.sustain = (value.inner() & 0xF0) >> 4
+        voice.envelope.release = value.inner() & 0x0F
       }
-      _ => ...
+      ...
     }
   }
 

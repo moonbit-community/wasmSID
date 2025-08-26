@@ -6,7 +6,7 @@ let s = "0123456789ABCDEF"
 //
 
 ///|
-pub(all) type UInt8 Int derive(Show, Eq, Compare, Default)
+pub(all) struct UInt8(Int) derive(Show, Eq, Compare, Default)
 
 ///|
 trait U8 {
@@ -15,65 +15,68 @@ trait U8 {
 
 ///|
 fn u8(self : UInt16) -> UInt8 {
-  self._ & 0xFF
+  self.inner() & 0xFF
 }
 
 ///|
 impl Add for UInt8 with op_add(self : UInt8, other : UInt8) -> UInt8 {
-  self._ + other._ // FIXME: Overflow
+  self.inner() + other.inner() // FIXME: Overflow
 }
 
 ///|
 impl Sub for UInt8 with op_sub(self : UInt8, other : UInt8) -> UInt8 {
-  self._ - other._ // FIXME: Underflow
+  self.inner() - other.inner() // FIXME: Underflow
 }
 
 ///|
 impl Mul for UInt8 with op_mul(self : UInt8, other : UInt8) -> UInt8 {
-  self._ * other._ // FIXME: Overflow
+  self.inner() * other.inner() // FIXME: Overflow
 }
 
 ///|
 impl Div for UInt8 with op_div(self : UInt8, other : UInt8) -> UInt8 {
-  self._ / other._ // FIXME: Underflow
+  self.inner() / other.inner() // FIXME: Underflow
 }
 
 ///|
 impl Mod for UInt8 with op_mod(self : UInt8, other : UInt8) -> UInt8 {
-  self._ % other._
+  self.inner() % other.inner()
 }
 
 ///|
 impl Shl for UInt8 with op_shl(self : UInt8, bit : Int) -> UInt8 {
-  self._ << bit
+  self.inner() << bit
 }
 
 ///|
 impl Shr for UInt8 with op_shr(self : UInt8, bit : Int) -> UInt8 {
-  self._ >> bit
+  self.inner() >> bit
 }
 
 ///|
 fn flip(self : UInt8, other : UInt8) -> UInt8 {
-  self._ & (-other._ - 1)
+  self.inner() & (-other.inner() - 1)
 }
 
 // bitwise and
+
 ///|
 impl BitAnd for UInt8 with land(self : UInt8, other : UInt8) -> UInt8 {
-  self._ & other._
+  self.inner() & other.inner()
 }
 
 // bitwise or
+
 ///|
 impl BitOr for UInt8 with lor(self : UInt8, bit : UInt8) -> UInt8 {
-  self._ | bit._
+  self.inner() | bit.inner()
 }
 
 // bitwise xor
+
 ///|
 impl BitXOr for UInt8 with lxor(self : UInt8, bit : UInt8) -> UInt8 {
-  self._ ^ bit._
+  self.inner() ^ bit.inner()
 }
 
 ///|
@@ -83,27 +86,27 @@ pub fn bit(self : UInt8, bit : UInt8) -> Bool {
   //   println("UInt8::bit out of bounds")
   //   abort("out of bounds")
   // }
-  ((self >> bit._) & 1) == 1
+  ((self >> bit.inner()) & 1) == 1
 }
 
 ///|
 fn bitn(self : UInt8, bit : UInt8) -> UInt8 {
-  (self >> bit._) & 1
+  (self >> bit.inner()) & 1
 }
 
 ///|
 fn clr(self : UInt8, mask : UInt8) -> UInt8 {
-  self._ & (-mask._ - 1)
+  self.inner() & (-mask.inner() - 1)
 }
 
 ///|
 fn set(self : UInt8, mask : UInt8) -> UInt8 {
-  self._ | mask._
+  self.inner() | mask.inner()
 }
 
 ///|
 fn has(self : UInt8, mask : UInt8) -> Bool {
-  (self._ & mask._) != 0
+  (self.inner() & mask.inner()) != 0
 }
 
 ///|
@@ -113,7 +116,7 @@ fn overflow(self : UInt8) -> Bool {
 
 ///|
 fn borrow(self : UInt8) -> Bool {
-  self._.is_neg()
+  self.inner().is_neg()
 }
 
 // fn to_byte(
@@ -134,23 +137,24 @@ fn borrow(self : UInt8) -> Bool {
 
 ///|
 fn to_signed(self : UInt8) -> Int {
-  self._ - ((self & 0x80) << 1)._
+  self.inner() - ((self & 0x80) << 1).inner()
 }
 
 ///|
 pub fn to_hex(self : UInt8) -> String {
-  s[((self >> 4) & 0x0F)._].to_string() + s[(self & 0x0F)._].to_string()
+  s[((self >> 4) & 0x0F).inner()].to_string() +
+  s[(self & 0x0F).inner()].to_string()
   // hex(self >> 4) + hex(self)
 }
 
 ///|
 fn to_byte(self : UInt8) -> Byte {
-  self._.to_byte()
+  self.inner().to_byte()
 }
 
 ///|
 fn to_int(self : UInt8) -> Int {
-  self._
+  self.inner()
 }
 
 //
@@ -158,7 +162,7 @@ fn to_int(self : UInt8) -> Int {
 //
 
 ///|
-pub(all) type UInt16 Int derive(Show, Eq, Compare, Default)
+pub(all) struct UInt16(Int) derive(Show, Eq, Compare, Default)
 
 ///|
 trait U16 {
@@ -167,60 +171,63 @@ trait U16 {
 
 ///|
 fn u16(self : UInt8) -> UInt16 {
-  self._ & 0xFFFF
+  self.inner() & 0xFFFF
 }
 
 ///|
 impl Add for UInt16 with op_add(self : UInt16, other : UInt16) -> UInt16 {
-  self._ + other._ |> u16 // handle overflow
+  (self.inner() + other.inner()) |> u16 // handle overflow
 }
 
 ///|
 impl Sub for UInt16 with op_sub(self : UInt16, other : UInt16) -> UInt16 {
-  self._ - other._ |> u16 // handle underflow
+  (self.inner() - other.inner()) |> u16 // handle underflow
 }
 
 ///|
 impl Mul for UInt16 with op_mul(self : UInt16, other : UInt16) -> UInt16 {
-  self._ * other._ |> u16 // handle overflow
+  (self.inner() * other.inner()) |> u16 // handle overflow
 }
 
 ///|
 impl Div for UInt16 with op_div(self : UInt16, other : UInt16) -> UInt16 {
-  self._ / other._ |> u16 // handle underflow
+  (self.inner() / other.inner()) |> u16 // handle underflow
 }
 
 ///|
 impl Shl for UInt16 with op_shl(self : UInt16, bit : Int) -> UInt16 {
-  self._ << bit |> u16
+  (self.inner() << bit) |> u16
 }
 
 ///|
 impl Shr for UInt16 with op_shr(self : UInt16, bit : Int) -> UInt16 {
-  self._ >> bit |> u16
+  (self.inner() >> bit) |> u16
 }
 
 // bitwise and
+
 ///|
 impl BitAnd for UInt16 with land(self : UInt16, other : UInt16) -> UInt16 {
-  self._ & other._
+  self.inner() & other.inner()
 }
 
 // bitwise or
+
 ///|
 impl BitOr for UInt16 with lor(self : UInt16, bit : UInt16) -> UInt16 {
-  self._ | bit._
+  self.inner() | bit.inner()
 }
 
 // bitwise xor
+
 ///|
 impl BitXOr for UInt16 with lxor(self : UInt16, bit : UInt16) -> UInt16 {
-  self._ ^ bit._
+  self.inner() ^ bit.inner()
 }
 
 ///|
 fn UInt16::has(self : UInt16, bit : UInt16) -> Bool {
-  (self._ & bit._) != 0
+  (self.inner() & bit.inner()) != 0
 }
 
 ///|
@@ -231,18 +238,18 @@ pub fn UInt16::to_hex(self : UInt16) -> String {
   //   0x0F)._].to_string(),
   // )
   // u8(self >> 8).to_hex() + u8(self & 0xFF).to_hex()
-  s[((self >> 12) & 0x0F)._].to_string() +
-  s[((self >> 8) & 0x0F)._].to_string() +
-  s[((self >> 4) & 0x0F)._].to_string() +
-  s[(self & 0x0F)._].to_string()
+  s[((self >> 12) & 0x0F).inner()].to_string() +
+  s[((self >> 8) & 0x0F).inner()].to_string() +
+  s[((self >> 4) & 0x0F).inner()].to_string() +
+  s[(self & 0x0F).inner()].to_string()
 }
 
 ///|
 fn UInt16::to_byte(self : UInt16) -> Byte {
-  self._.to_byte()
+  self.inner().to_byte()
 }
 
 ///|
 fn UInt16::to_int(self : UInt16) -> Int {
-  self._
+  self.inner()
 }

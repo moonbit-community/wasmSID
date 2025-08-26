@@ -1,5 +1,5 @@
 ///|
-pub(all) type ICR UInt8 derive(Eq, Compare)
+pub(all) struct ICR(UInt8) derive(Eq, Compare)
 
 ///|
 enum ICRFlags {
@@ -34,12 +34,12 @@ fn ICRFlags::op_get(self : ICRFlags, flag : ICRFlags) -> Int {
 
 ///|
 fn ICR::land(self : ICR, value : ICRFlags) -> ICR {
-  self._ & value[value]
+  self.inner() & value[value]
 }
 
 ///|
 fn ICR::lor(self : ICR, value : ICR) -> ICR {
-  self._ | value._
+  self.inner() | value.inner()
 }
 
 ///|
@@ -49,10 +49,10 @@ fn ICR::icr(flag : ICRFlags) -> Int {
 
 ///|
 fn ICR::has(self : ICR, mask : ICRFlags) -> Bool {
-  (self._ & mask[mask]) != 0
+  (self.inner() & mask[mask]) != 0
 }
 
 ///|
 fn ICR::clear(self : ICR, mask : ICRFlags) -> ICR {
-  self._ & (-mask[mask] - 1)
+  self.inner() & (-mask[mask] - 1)
 }

@@ -1,3 +1,4 @@
+// Generated using `moon info`, DON'T EDIT IT
 package "trancee/wasmSID/lib"
 
 import(
@@ -9,51 +10,12 @@ let cia1_mem_start : Int
 
 let cia2_mem_start : Int
 
-fn emulate(C64) -> Output
-
-fn get_registers(C64) -> @cpu.Registers
-
-fn hook(Memory, Int, Int, (UInt16, Bool) -> UInt8, (UInt16, UInt8, Bool) -> Unit) -> Unit
-
-fn initC64(C64) -> Unit!
-
-fn initCPU(C64, baseaddress? : Int) -> Unit
-
-fn load(NES, FixedArray[Int], addr~ : Int = .., length~ : Int = ..) -> Unit
-
-fn op_set(C64, C64register, UInt8) -> Unit
-
-fn pc(NES) -> Int
-
-fn process(PSID) -> Unit!
-
-fn push(NES, @cpu.UInt8) -> Unit
-
-fn push16(NES, @cpu.UInt16) -> Unit
-
-fn read(C64, Int, dummy~ : Bool = ..) -> Int
-
-fn reset(C64) -> Unit!
-
-fn set_bank(C64, IOPort) -> Unit
-
-fn set_flags(NES, @cpu.UInt8) -> Unit
-
-fn step(NES) -> Int
-
-fn to_hex(UInt8) -> String
-
-fn to_string(Exception) -> String
-
 let vic_mem_start : Int
 
-fn videoStandard(PSID) -> VideoStandard
-
-fn write(C64, Int, Int, dummy~ : Bool = ..) -> Unit
-
-fn write_array(C64, C64register, Array[UInt8]) -> Unit
-
-fn write_word(C64, C64register, UInt16) -> Unit
+// Errors
+type Exception
+fn Exception::to_string(Self) -> String
+impl Show for Exception
 
 // Types and methods
 type ADSR
@@ -97,31 +59,29 @@ pub(all) struct C64 {
   mut prevNMI : Bool
   mut debug : Bool
 }
-impl C64 {
-  clear_flags(Self) -> Unit
-  clear_registers(Self) -> Unit
-  emulate(Self) -> Output
-  get_flags(Self) -> @cpu.Flags
-  get_registers(Self) -> @cpu.Registers
-  hook(Self, Int, (Int) -> Unit) -> Unit
-  initC64(Self) -> Unit!
-  initCPU(Self, baseaddress? : Int) -> Unit
-  load(Self, FixedArray[Int], offset~ : Int = .., length~ : Int = .., has_load_address~ : Bool = ..) -> Int
-  new(baseaddress~ : Int = .., mem? : Memory, data~ : FixedArray[Int] = .., address~ : Int = .., length~ : Int = .., sampleRate~ : Int = .., model~ : FixedArray[Model] = .., videoStandard~ : VideoStandard = .., realSID~ : Bool = .., debug~ : Bool = ..) -> Self
-  op_set(Self, C64register, UInt8) -> Unit
-  pc(Self) -> Int
-  push(Self, @cpu.UInt8) -> Unit
-  push16(Self, @cpu.UInt16) -> Unit
-  read(Self, Int, dummy~ : Bool = ..) -> Int
-  reset(Self) -> Unit!
-  setA(Self, Int) -> Unit
-  set_bank(Self, IOPort) -> Unit
-  set_flags(Self, @cpu.UInt8) -> Unit
-  set_interrupt_flag(Self) -> Unit
-  write(Self, Int, Int, dummy~ : Bool = ..) -> Unit
-  write_array(Self, C64register, Array[UInt8]) -> Unit
-  write_word(Self, C64register, UInt16) -> Unit
-}
+fn C64::clear_flags(Self) -> Unit
+fn C64::clear_registers(Self) -> Unit
+fn C64::emulate(Self) -> Output
+fn C64::get_flags(Self) -> @cpu.Flags
+fn C64::get_registers(Self) -> @cpu.Registers
+fn C64::hook(Self, Int, (Int) -> Unit) -> Unit
+fn C64::initC64(Self) -> Unit raise
+fn C64::initCPU(Self, baseaddress? : Int) -> Unit
+fn C64::load(Self, FixedArray[Int], offset? : Int, length? : Int, has_load_address? : Bool) -> Int
+fn C64::new(baseaddress? : Int, mem? : Memory, data? : FixedArray[Int], address? : Int, length? : Int, sampleRate? : Int, model? : FixedArray[Model], videoStandard? : VideoStandard, realSID? : Bool, debug? : Bool) -> Self
+fn C64::op_set(Self, C64register, UInt8) -> Unit
+fn C64::pc(Self) -> Int
+fn C64::push(Self, @cpu.UInt8) -> Unit
+fn C64::push16(Self, @cpu.UInt16) -> Unit
+fn C64::read(Self, Int, dummy? : Bool) -> Int
+fn C64::reset(Self) -> Unit raise
+fn C64::setA(Self, Int) -> Unit
+fn C64::set_bank(Self, IOPort) -> Unit
+fn C64::set_flags(Self, @cpu.UInt8) -> Unit
+fn C64::set_interrupt_flag(Self) -> Unit
+fn C64::write(Self, Int, Int, dummy? : Bool) -> Unit
+fn C64::write_array(Self, C64register, Array[UInt8]) -> Unit
+fn C64::write_word(Self, C64register, UInt16) -> Unit
 
 pub(all) enum C64register {
   D6510
@@ -350,11 +310,9 @@ impl Eq for C64register
 impl Show for C64register
 
 type CIA
-impl CIA {
-  emulate(Self, Int) -> Bool
-  new(mem? : Memory, Int, videoStandard~ : VideoStandard = .., debug~ : Bool = ..) -> Self
-  reset(Self, videoStandard~ : VideoStandard = ..) -> Unit
-}
+fn CIA::emulate(Self, Int) -> Bool
+fn CIA::new(mem? : Memory, Int, videoStandard? : VideoStandard, debug? : Bool) -> Self
+fn CIA::reset(Self, videoStandard? : VideoStandard) -> Unit
 
 type CIAInterruptControl
 impl Default for CIAInterruptControl
@@ -375,13 +333,15 @@ type CPUClock
 impl Eq for CPUClock
 impl Show for CPUClock
 
-pub(all) type CRA UInt8
+pub(all) struct CRA(UInt8)
+fn CRA::inner(Self) -> UInt8
 impl Compare for CRA
 impl Eq for CRA
 
 type CRAFlags
 
-pub(all) type CRB UInt8
+pub(all) struct CRB(UInt8)
+fn CRB::inner(Self) -> UInt8
 impl Compare for CRB
 impl Eq for CRB
 
@@ -414,12 +374,6 @@ type Envelope
 impl Default for Envelope
 impl Show for Envelope
 
-type Exception
-impl Exception {
-  to_string(Self) -> String
-}
-impl Show for Exception
-
 type FilterResonanceControl
 impl Show for FilterResonanceControl
 
@@ -442,16 +396,15 @@ impl Show for FrameRate
 
 type Hook
 
-pub(all) type ICR UInt8
+pub(all) struct ICR(UInt8)
+fn ICR::inner(Self) -> UInt8
 impl Compare for ICR
 impl Eq for ICR
 
 type ICRFlags
 
 type IOPort
-impl IOPort {
-  from_int(UInt8) -> Self
-}
+fn IOPort::from_int(UInt8) -> Self
 impl Default for IOPort
 impl Show for IOPort
 
@@ -463,15 +416,13 @@ impl Default for InterruptFlag
 impl Show for InterruptFlag
 
 type Memory
-impl Memory {
-  clear(Self) -> Unit
-  hook(Self, Int, Int, (UInt16, Bool) -> UInt8, (UInt16, UInt8, Bool) -> Unit) -> Unit
-  new(length~ : Int = .., value~ : Int = ..) -> Self
-  read(Self, UInt16, dummy~ : Bool = ..) -> UInt8
-  read_direct(Self, UInt16) -> UInt8
-  write(Self, UInt16, UInt8, dummy~ : Bool = ..) -> Unit
-  write_direct(Self, UInt16, UInt8) -> Unit
-}
+fn Memory::clear(Self) -> Unit
+fn Memory::hook(Self, Int, Int, (UInt16, Bool) -> UInt8, (UInt16, UInt8, Bool) -> Unit) -> Unit
+fn Memory::new(length? : Int, value? : Int) -> Self
+fn Memory::read(Self, UInt16, dummy? : Bool) -> UInt8
+fn Memory::read_direct(Self, UInt16) -> UInt8
+fn Memory::write(Self, UInt16, UInt8, dummy? : Bool) -> Unit
+fn Memory::write_direct(Self, UInt16, UInt8) -> Unit
 
 type MemoryControlRegister
 
@@ -488,15 +439,13 @@ pub(all) struct NES {
   mem : Memory
   cpu : @cpu.CPU
 }
-impl NES {
-  load(Self, FixedArray[Int], addr~ : Int = .., length~ : Int = ..) -> Unit
-  new(baseaddress~ : Int = .., data~ : FixedArray[Int] = .., addr~ : Int = .., length~ : Int = ..) -> Self
-  pc(Self) -> Int
-  push(Self, @cpu.UInt8) -> Unit
-  push16(Self, @cpu.UInt16) -> Unit
-  set_flags(Self, @cpu.UInt8) -> Unit
-  step(Self) -> Int
-}
+fn NES::load(Self, FixedArray[Int], addr? : Int, length? : Int) -> Unit
+fn NES::new(baseaddress? : Int, data? : FixedArray[Int], addr? : Int, length? : Int) -> Self
+fn NES::pc(Self) -> Int
+fn NES::push(Self, @cpu.UInt8) -> Unit
+fn NES::push16(Self, @cpu.UInt16) -> Unit
+fn NES::set_flags(Self, @cpu.UInt8) -> Unit
+fn NES::step(Self) -> Int
 
 type Output
 impl Default for Output
@@ -525,21 +474,17 @@ pub(all) struct PSID {
   mut sid2Address : UInt8
   mut sid3Address : UInt8
 }
-impl PSID {
-  new(Memory, FixedArray[Int]) -> Self!
-  process(Self) -> Unit!
-  videoStandard(Self) -> VideoStandard
-}
+fn PSID::new(Memory, FixedArray[Int]) -> Self raise
+fn PSID::process(Self) -> Unit raise
+fn PSID::videoStandard(Self) -> VideoStandard
 
 type RunMode
 impl Eq for RunMode
 impl Show for RunMode
 
 type SID
-impl SID {
-  new(mem? : Memory, Int, model~ : Model = .., channel~ : Channel = .., videoStandard~ : VideoStandard = .., debug~ : Bool = ..) -> Self
-  reset(Self, videoStandard~ : VideoStandard = ..) -> Unit
-}
+fn SID::new(mem? : Memory, Int, model? : Model, channel? : Channel, videoStandard? : VideoStandard, debug? : Bool) -> Self
+fn SID::reset(Self, videoStandard? : VideoStandard) -> Unit
 
 type SIDFlags
 impl Eq for SIDFlags
@@ -588,30 +533,26 @@ impl Show for TimerAInputMode
 type TimerBInputMode
 impl Show for TimerBInputMode
 
-pub(all) type UInt16 Int
-impl UInt16 {
-  to_hex(Self) -> String
-}
+pub(all) struct UInt16(Int)
+fn UInt16::inner(Self) -> Int
+fn UInt16::to_hex(Self) -> String
 impl Compare for UInt16
 impl Default for UInt16
 impl Eq for UInt16
 impl Show for UInt16
 
-pub(all) type UInt8 Int
-impl UInt8 {
-  to_hex(Self) -> String
-}
+pub(all) struct UInt8(Int)
+fn UInt8::inner(Self) -> Int
+fn UInt8::to_hex(Self) -> String
 impl Compare for UInt8
 impl Default for UInt8
 impl Eq for UInt8
 impl Show for UInt8
 
 type VIC
-impl VIC {
-  emulate(Self, Int) -> Bool
-  new(mem? : Memory, Int, videoStandard~ : VideoStandard = .., debug~ : Bool = ..) -> Self
-  reset(Self, videoStandard~ : VideoStandard = ..) -> Unit!
-}
+fn VIC::emulate(Self, Int) -> Bool
+fn VIC::new(mem? : Memory, Int, videoStandard? : VideoStandard, debug? : Bool) -> Self
+fn VIC::reset(Self, videoStandard? : VideoStandard) -> Unit raise
 
 type VICRegister
 
